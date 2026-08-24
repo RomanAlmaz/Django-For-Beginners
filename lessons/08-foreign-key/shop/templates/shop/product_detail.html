@@ -1,0 +1,62 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ product.name }}</h2>
+
+    {% if product.category %}
+        <p><strong>Категория:</strong> {{ product.category.name }}</p>
+    {% endif %}
+
+    <p><strong>Цена:</strong> {{ product.price }} руб.</p>
+
+    {% if product.description %}
+        <p>{{ product.description }}</p>
+    {% endif %}
+
+    {% if product.is_featured %}
+        <p class="badge">Товар на главной</p>
+    {% endif %}
+
+    <p class="meta">Добавлен: {{ product.created_at|date:"d.m.Y" }}</p>
+
+    <p class="actions">
+        <a href="{% url 'product_update' product.pk %}">Редактировать</a>
+        |
+        <a href="{% url 'product_delete' product.pk %}">Удалить</a>
+        |
+        <a href="{% url 'products' %}">Назад к товарам</a>
+    </p>
+
+    <h3>Отзывы ({{ reviews|length }})</h3>
+    {% if reviews %}
+        <ul class="review-list">
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.author_name }}</strong>
+                    - {{ review.rating }}/5
+                    <br>{{ review.text }}
+                    <span class="meta">{{ review.created_at|date:"d.m.Y" }}</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Отзывов пока нет. Оставьте первый.</p>
+    {% endif %}
+
+    <h3>Оставить отзыв</h3>
+    <form method="post" action="{% url 'review_create' product.pk %}" class="product-form">
+        {% csrf_token %}
+        {% for field in review_form %}
+            <div class="form-field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="field-errors">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Отправить отзыв</button>
+    </form>
+{% endblock %}

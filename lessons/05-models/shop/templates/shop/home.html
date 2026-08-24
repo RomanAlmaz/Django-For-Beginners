@@ -1,0 +1,37 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+    <p>{{ welcome_message }}</p>
+
+    <h3>Категории</h3>
+    {% if categories %}
+        <ul class="product-list">
+            {% for category in categories %}
+                <li>
+                    <strong>{{ category.name }}</strong>
+                    {% if category.description %}
+                        - {{ category.description }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Категорий пока нет.</p>
+    {% endif %}
+
+    <h3>Избранные товары</h3>
+    {% if featured_products %}
+        <ul class="product-list">
+            {% for product in featured_products %}
+                <li>{{ product.name }} - {{ product.price }} руб.</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Скоро появятся новые товары.</p>
+    {% endif %}
+
+    <p><a href="{% url 'products' %}">Все товары</a></p>
+{% endblock %}

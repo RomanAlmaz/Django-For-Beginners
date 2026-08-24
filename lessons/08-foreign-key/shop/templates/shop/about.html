@@ -1,0 +1,17 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+    <p>{{ about_text }}</p>
+
+    {% if team_members %}
+        <h3>Наша команда</h3>
+        <ul>
+            {% for member in team_members %}
+                <li>{{ member }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

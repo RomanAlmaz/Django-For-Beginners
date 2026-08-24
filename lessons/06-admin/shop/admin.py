@@ -1,0 +1,16 @@
+from django.contrib import admin
+
+from shop.models import Category, Product
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description']
+    search_fields = ['name', 'description']
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'price', 'is_featured', 'created_at']
+    list_filter = ['is_featured', 'created_at']
+    search_fields = ['name', 'description']

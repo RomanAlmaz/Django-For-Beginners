@@ -1,0 +1,255 @@
+# Lesson 05 - Models
+
+Шестой урок курса Django for Beginners. Вы продолжите проект из Lesson 04 и добавите первые **модели** для магазина: `Category` и `Product`.
+
+## Что изучается в этом уроке
+
+Главная тема - **модели и миграции**:
+
+- Django model и поля (`CharField`, `TextField`, `DecimalField`, …);
+- `makemigrations` и `migrate`;
+- SQLite и файл `db.sqlite3`;
+- ORM: `objects.all()`, `objects.filter()`.
+
+Цепочка для новичка:
+
+```
+Python class → Model → migration → таблица в базе → ORM → objects.all()
+```
+
+## Запуск
+
+```bash
+py -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+После `migrate` база существует, но записей в ней ещё нет. В **Lesson 06** мы научимся создавать категории и товары через Django Admin.
+
+## Что уже было в Lesson 04
+
+В прошлых уроках вы:
+
+- создали приложение `shop` с шаблонами;
+- использовали `render()` и context;
+- подключили CSS, JavaScript и images через `{% static %}`;
+- показывали список товаров из Python-словаря в view.
+
+Данные жили только в коде. После перезапуска сервера они не менялись, но их нельзя было редактировать без правки Python-файла.
+
+## Что добавляется в этом уроке
+
+Мы создаем **модели** `Category` и `Product`. Django сохранит данные в базе SQLite и позволит получать их через ORM.
+
+## Что такое Model
+
+Model (модель) - Python-класс, который описывает структуру данных. Django автоматически создает таблицу в базе данных на основе модели.
+
+Например, модель `Product` описывает товар: название, цена, описание.
+
+## Структура проекта
+
+```
+05-models/
+├── manage.py
+├── django_shop/
+└── shop/
+    ├── models.py
+    ├── views.py
+    ├── fixtures/
+    │   └── initial_data.json
+    ├── migrations/
+    │   └── 0001_initial.py
+    └── templates/
+        └── shop/
+            ├── base.html
+            ├── home.html
+            ├── products.html
+            └── ...
+```
+
+## Шаг 1. Модели Category и Product
+
+Откройте `shop/models.py`:
+
+```python
+from django.db import models
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name_plural = 'categories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True)
+    is_featured = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+```
+
+### Поля моделей
+
+| Поле | Тип | Назначение |
+|------|-----|------------|
+| `name` | `CharField` | Короткий текст (название) |
+| `description` | `TextField` | Длинный текст |
+| `price` | `DecimalField` | Число с десятичной точкой (цена) |
+| `is_featured` | `BooleanField` | True/False (товар на главной) |
+| `created_at` | `DateTimeField` | Дата и время создания |
+
+`blank=True` означает, что поле может быть пустым в формах. `auto_now_add=True` автоматически записывает время создания.
+
+`__str__` - как объект отображается в админке и в shell (добавим админку в следующем уроке).
+
+## Шаг 2. Миграции
+
+Миграция - файл, который описывает изменения в структуре базы данных.
+
+Создайте миграции:
+
+```bash
+python manage.py makemigrations shop
+```
+
+Django создаст файл в `shop/migrations/`.
+
+Примените миграции:
+
+```bash
+python manage.py migrate
+```
+
+Django создаст файл `db.sqlite3` и таблицы `shop_category` и `shop_product`.
+
+## Шаг 3. Запросы к базе через ORM
+
+ORM (Object-Relational Mapping) - способ работать с базой через Python-код, без SQL.
+
+Обновите `shop/views.py`:
+
+```python
+from django.shortcuts import render
+
+from shop.models import Category, Product
+
+
+def home(request):
+    context = {
+        'page_title': 'Home',
+        'welcome_message': (
+            'Welcome to Django Shop! This is the home page of our online store.'
+        ),
+        'categories': Category.objects.all(),
+        'featured_products': Product.objects.filter(is_featured=True),
+    }
+    return render(request, 'shop/home.html', context)
+
+
+def products(request):
+    context = {
+        'page_title': 'Products',
+        'products': Product.objects.all(),
+    }
+    return render(request, 'shop/products.html', context)
+```
+
+### Основные запросы ORM
+
+| Код | Что делает |
+|-----|------------|
+| `Category.objects.all()` | Все категории |
+| `Product.objects.all()` | Все товары |
+| `Product.objects.filter(is_featured=True)` | Только избранные товары |
+| `Product.objects.get(pk=1)` | Один товар по id |
+
+## Шаг 4. Шаблон products.html
+
+Создайте `shop/templates/shop/products.html` - страница со всеми товарами из базы.
+
+Добавьте URL в `shop/urls.py`:
+
+```python
+path('products/', views.products, name='products'),
+```
+
+И ссылку в навигации `base.html`:
+
+```html
+<a href="{% url 'products' %}">Products</a>
+```
+
+На главной странице категории и избранные товары теперь приходят из базы, а не из словаря в view.
+
+## Шаг 5. Проверка и запуск
+
+```bash
+python manage.py check
+python manage.py migrate
+python manage.py runserver
+```
+
+Страницы `/` и `/products/` будут пустыми - это нормально. Данные появятся в Lesson 06 через Admin.
+
+## 💡 Если хотите сразу получить готовые данные
+
+См. [Test data](../../TEST_DATA.md) - опциональная загрузка `initial_data` через `loaddata`. Это **не** обязательная часть курса.
+
+## 💡 Дополнительно: Django shell
+
+```bash
+python manage.py shell
+```
+
+```python
+from shop.models import Product
+Product.objects.all()
+Product.objects.filter(price__gte=20)
+```
+
+Shell - интерактивная консоль Python с доступом к Django. Удобно для экспериментов, не обязательна на этом уроке.
+
+## Итог урока
+
+Вы создали модели, применили миграции и научились получать записи из базы через `objects.all()` и `objects.filter()`. Данные магазина теперь живут в SQLite.
+
+## Домашнее задание
+
+1. Добавьте фильтр на странице products: товары с ценой меньше 20.
+2. Добавьте поле `stock` (IntegerField) в модель Product и создайте миграцию.
+3. (Опционально) Загрузите тестовые данные - см. [Test data](../../TEST_DATA.md).
+
+## После этого урока
+
+Вы должны уметь:
+
+- объяснить, что такое Django model;
+- создать модель с разными типами полей;
+- выполнить `makemigrations` и `migrate`;
+- получать данные через `objects.all()` и `objects.filter()`;
+- понимать, где Django хранит данные (SQLite, файл `db.sqlite3`).
+
+## Следующий урок
+
+[Lesson 06 - Django Admin](../06-admin/README.md)
+
+## Предыдущий урок
+
+[Lesson 04 - Static Files](../04-static/README.md)

@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Django Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-brand">
+            <img src="{% static 'shop/images/logo.svg' %}" alt="Логотип Django Shop" width="40" height="40">
+            <h1>Django Shop</h1>
+        </div>
+        <nav class="site-nav">
+            <a href="{% url 'home' %}">Главная</a>
+            <a href="{% url 'products' %}">Товары</a>
+            <a href="{% url 'about' %}">О сайте</a>
+            <a href="{% url 'contact' %}">Контакты</a>
+            |
+            {% if user.is_authenticated %}
+                <span class="nav-user">Привет, {{ user.username }}</span>
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="link-button">Выход</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Вход</a>
+                <a href="{% url 'register' %}">Регистрация</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="site-main">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>Django Shop - учебный проект. Создано: Roman</p>
+    </footer>
+
+    <script src="{% static 'shop/js/main.js' %}" defer></script>
+</body>
+</html>

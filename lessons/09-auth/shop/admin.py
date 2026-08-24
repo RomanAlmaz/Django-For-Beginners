@@ -1,0 +1,23 @@
+from django.contrib import admin
+
+from shop.models import Category, Product, Review
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description']
+    search_fields = ['name', 'description']
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'category', 'price', 'is_featured', 'created_at']
+    list_filter = ['category', 'is_featured', 'created_at']
+    search_fields = ['name', 'description']
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['product', 'author_name', 'user', 'rating', 'created_at']
+    list_filter = ['rating', 'created_at']
+    search_fields = ['author_name', 'user__username', 'text']

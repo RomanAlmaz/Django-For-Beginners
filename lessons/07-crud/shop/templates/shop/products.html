@@ -1,0 +1,30 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <p><a href="{% url 'product_create' %}">Добавить товар</a></p>
+
+    {% if products %}
+        <ul class="product-list">
+            {% for product in products %}
+                <li>
+                    <a href="{% url 'product_detail' product.pk %}">
+                        <strong>{{ product.name }}</strong>
+                    </a>
+                    - {{ product.price }} руб.
+                    {% if product.is_featured %}
+                        <span class="badge">На главной</span>
+                    {% endif %}
+                    {% if product.description %}
+                        <br>{{ product.description }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>В базе пока нет товаров.</p>
+    {% endif %}
+{% endblock %}

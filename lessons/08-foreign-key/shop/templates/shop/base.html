@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Django Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-brand">
+            <img src="{% static 'shop/images/logo.svg' %}" alt="Логотип Django Shop" width="40" height="40">
+            <h1>Django Shop</h1>
+        </div>
+        <nav class="site-nav">
+            <a href="{% url 'home' %}">Главная</a>
+            <a href="{% url 'products' %}">Товары</a>
+            <a href="{% url 'about' %}">О сайте</a>
+            <a href="{% url 'contact' %}">Контакты</a>
+        </nav>
+    </header>
+
+    <main class="site-main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <p>Django Shop - учебный проект. Создано: Roman</p>
+    </footer>
+
+    <script src="{% static 'shop/js/main.js' %}" defer></script>
+</body>
+</html>
