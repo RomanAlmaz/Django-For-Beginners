@@ -1,0 +1,34 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}Вход - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>Вход</h2>
+
+    <form method="post" class="product-form">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-field">
+            <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="field-errors">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password.id_for_label }}">Пароль</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="field-errors">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Войти</button>
+        <a href="{% url 'register' %}">Создать аккаунт</a>
+    </form>
+{% endblock %}

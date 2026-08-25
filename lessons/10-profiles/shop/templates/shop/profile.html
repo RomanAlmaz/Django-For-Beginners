@@ -1,0 +1,32 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+    <p><strong>Имя:</strong> {{ user.first_name|default:"не указано" }}</p>
+    <p><strong>Почта:</strong> {{ user.email|default:"не указан" }}</p>
+    <p><strong>Город:</strong> {{ profile.city|default:"не указан" }}</p>
+    <p><strong>О себе:</strong> {{ profile.bio|default:"не указано" }}</p>
+
+    <p><a href="{% url 'profile_edit' %}">Редактировать профиль</a></p>
+
+    <h3>Мои отзывы ({{ reviews|length }})</h3>
+    {% if reviews %}
+        <ul class="review-list">
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.product.name }}</strong>
+                    - {{ review.rating }}/5
+                    <br>{{ review.text }}
+                    <br>
+                    <a href="{% url 'product_detail' review.product.pk %}">Открыть товар</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Вы еще не оставили отзывов.</p>
+    {% endif %}
+{% endblock %}

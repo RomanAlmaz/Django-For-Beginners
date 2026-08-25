@@ -1,0 +1,86 @@
+[
+  {
+    "model": "shop.category",
+    "pk": 1,
+    "fields": {
+      "name": "Книги",
+      "description": "Книги по программированию и Django для начинающих."
+    }
+  },
+  {
+    "model": "shop.category",
+    "pk": 2,
+    "fields": {
+      "name": "Мерч",
+      "description": "Кружки, футболки и стикеры для разработчиков."
+    }
+  },
+  {
+    "model": "shop.category",
+    "pk": 3,
+    "fields": {
+      "name": "Аксессуары",
+      "description": "Полезные вещи для работы за компьютером."
+    }
+  },
+  {
+    "model": "shop.product",
+    "pk": 1,
+    "fields": {
+      "category": 2,
+      "name": "Кружка Python",
+      "price": "12.99",
+      "description": "Белая кружка с логотипом Python.",
+      "is_featured": true,
+      "created_at": "2026-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "shop.product",
+    "pk": 2,
+    "fields": {
+      "category": 2,
+      "name": "Футболка Django",
+      "price": "24.99",
+      "description": "Удобная футболка для фанатов Django.",
+      "is_featured": true,
+      "created_at": "2026-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "shop.product",
+    "pk": 3,
+    "fields": {
+      "category": 2,
+      "name": "Стикеры для кодинга",
+      "price": "5.99",
+      "description": "Набор забавных стикеров про программирование.",
+      "is_featured": true,
+      "created_at": "2026-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "shop.product",
+    "pk": 4,
+    "fields": {
+      "category": 1,
+      "name": "Книга Django for Beginners",
+      "price": "29.99",
+      "description": "Пошаговое руководство по изучению Django.",
+      "is_featured": false,
+      "created_at": "2026-01-16T10:00:00Z"
+    }
+  },
+  {
+    "model": "shop.product",
+    "pk": 5,
+    "fields": {
+      "category": 3,
+      "name": "Подставка для ноутбука",
+      "price": "39.99",
+      "description": "Регулируемая подставка для комфортной работы.",
+      "is_featured": false,
+      "created_at": "2026-01-16T10:00:00Z"
+    }
+  }
+]

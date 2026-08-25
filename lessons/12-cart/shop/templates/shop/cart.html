@@ -1,0 +1,51 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    {% if cart_lines %}
+        <table class="cart-table">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Цена</th>
+                    <th>Количество</th>
+                    <th>Сумма</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in cart_lines %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'product_detail' line.product.pk %}">
+                                {{ line.product.name }}
+                            </a>
+                        </td>
+                        <td>{{ line.product.price }} руб.</td>
+                        <td>
+                            <form method="post" action="{% url 'cart_update' line.product.pk %}" class="cart-inline-form">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ line.quantity }}" min="1" max="99">
+                                <button type="submit">Обновить</button>
+                            </form>
+                        </td>
+                        <td>{{ line.line_total }} руб.</td>
+                        <td>
+                            <form method="post" action="{% url 'cart_remove' line.product.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-danger">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="cart-total"><strong>Итого:</strong> {{ cart_total }} руб.</p>
+    {% else %}
+        <p>Корзина пуста. <a href="{% url 'products' %}">Перейти к товарам</a></p>
+    {% endif %}
+{% endblock %}

@@ -45,19 +45,13 @@ Django - Python-фреймворк для веб-разработки. Он да
 | 07 | CRUD |
 | 08 | ForeignKey |
 | 09 | Authentication |
-| 10 | OneToOneField + Authorization |
+| 10 | Profiles (OneToOneField) |
+| 11 | Authorization (ownership) |
+| 12 | Cart (sessions) |
 
-Уроки 11-16 (в разработке) будут следовать тому же принципу: Cart, Orders, Pagination, Images, REST API, Production - **каждый отдельно**, без смешивания Docker + DRF + PostgreSQL в одном README.
+Уроки 13-17 (в разработке): Orders, Pagination, Images, REST API, Production - **каждый отдельно**.
 
-**Каждый урок содержит полностью рабочее состояние проекта.** Вы можете открыть любую папку в `lessons/`, установить зависимости и запустить сервер - без сборки из предыдущих уроков.
-
-Например:
-
-- Lesson 03 → скачать → `migrate` → `runserver`
-- Lesson 07 → скачать → `migrate` → `runserver`
-- Lesson 10 → скачать → `migrate` → `runserver`
-
-Это одна из главных особенностей курса: каждый шаг - готовый Django-проект на своём этапе развития.
+**Каждый урок - отдельный рабочий проект.** Откройте папку в `lessons/`, `migrate`, `runserver`.
 
 ## Roadmap
 
@@ -72,15 +66,16 @@ Django - Python-фреймворк для веб-разработки. Он да
 7. CRUD                  - Create, Read, Update, Delete
 8. ForeignKey            - связь Product → Category, Review
 9. Authentication        - регистрация, login, logout
-10. Profiles & Authorization - OneToOneField, ownership
+10. Profiles             - OneToOneField, profile page
+11. Authorization        - ownership, свои отзывы
+12. Cart                 - корзина через sessions
 
-🚧 Lessons 11-16 - в разработке (одна тема на урок):
-11. Cart                 - корзина
-12. Orders               - заказы
-13. Pagination           - постраничный список
-14. Images               - загрузка изображений
-15. REST API             - Django REST Framework
-16. Production           - deploy, SECRET_KEY через .env
+🚧 Lessons 13-17 - в разработке:
+13. Orders               - заказы
+14. Pagination           - постраничный список
+15. Images               - загрузка изображений
+16. REST API             - Django REST Framework
+17. Production           - deploy, SECRET_KEY через .env
 ```
 
 ## Структура репозитория
@@ -125,11 +120,13 @@ cd Django-For-Beginners/lessons/00-hello-django
 | | |
 |---|---|
 | Python | 3.10+ (автор Roman использует **3.14**) |
-| Django | **5.2.x** (курс проверен на **5.2.12**) |
+| Django | **5.2.12** (в `requirements.txt` каждого урока) |
 | Терминал | Git Bash на Windows (рекомендуется) |
 | Git | для клонирования репозитория |
 
-Подойдет Django 5.2.11 или 5.2.13 - курс не зависит от патч-версии.
+Подойдет Python 3.10+. Курс разработан и проверен на Django **5.2.12**.
+
+Файл `tests.py` в уроках 00-08 - стандартный шаблон Django. Тестирование появится в отдельной теме; в уроках 09+ есть простые примеры тестов.
 
 ## Настройка окружения (один раз)
 
@@ -154,7 +151,9 @@ pip install -r requirements.txt
 | 07 | CRUD | [lessons/07-crud](lessons/07-crud/) |
 | 08 | ForeignKey | [lessons/08-foreign-key](lessons/08-foreign-key/) |
 | 09 | Authentication | [lessons/09-auth](lessons/09-auth/) |
-| 10 | Profiles & Authorization (OneToOneField, ownership) | [lessons/10-profiles-reviews](lessons/10-profiles-reviews/) |
+| 10 | Profiles (OneToOneField) | [lessons/10-profiles](lessons/10-profiles/) |
+| 11 | Authorization (ownership) | [lessons/11-authorization](lessons/11-authorization/) |
+| 12 | Cart (sessions) | [lessons/12-cart](lessons/12-cart/) |
 
 ## Итоговый проект
 

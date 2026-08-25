@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -26,7 +28,12 @@ class Product(models.Model):
         verbose_name='категория',
     )
     name = models.CharField('название', max_length=200)
-    price = models.DecimalField('цена', max_digits=10, decimal_places=2)
+    price = models.DecimalField(
+        'цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
+    )
     description = models.TextField('описание', blank=True)
     is_featured = models.BooleanField('рекомендуемый', default=False)
     created_at = models.DateTimeField('дата создания', auto_now_add=True)

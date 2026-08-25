@@ -111,7 +111,7 @@ class Product(models.Model):
 |------|-----|------------|
 | `name` | `CharField` | Короткий текст (название) |
 | `description` | `TextField` | Длинный текст |
-| `price` | `DecimalField` | Число с десятичной точкой (цена) |
+| `price` | `DecimalField` | Число с десятичной точкой (цена). В коде урока - `MinValueValidator(0.01)`, чтобы цена не могла быть отрицательной (модель защищает данные, не только HTML-форма) |
 | `is_featured` | `BooleanField` | True/False (товар на главной) |
 | `created_at` | `DateTimeField` | Дата и время создания |
 

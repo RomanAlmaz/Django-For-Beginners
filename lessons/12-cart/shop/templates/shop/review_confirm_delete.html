@@ -1,0 +1,16 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <p>Удалить отзыв от <strong>{{ review.user.username }}</strong>?</p>
+    <p class="meta">{{ review.text }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">Да, удалить</button>
+        <a href="{% url 'product_detail' product.pk %}">Отмена</a>
+    </form>
+{% endblock %}

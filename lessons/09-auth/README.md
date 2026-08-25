@@ -8,10 +8,11 @@
 - registration (регистрация);
 - login и logout;
 - `request.user`;
-- `login_required`;
-- authentication vs authorization;
+- `@login_required`;
 - `UserCreationForm`;
 - `LoginView` и `LogoutView`.
+
+Разница authentication / authorization - коротко; ownership и permissions - в **Lesson 11**.
 
 ## Окружение
 
@@ -69,17 +70,16 @@ review.user = request.user
 review.author_name = request.user.get_username()  # для совместимости с демо-данными
 ```
 
-В Lesson 10 поле `author_name` будет удалено - отзыв будет принадлежать только `User`.
+В Lesson 11 поле `author_name` будет удалено - отзыв будет принадлежать только `User`.
 
-## Authentication vs Authorization
+## Authentication и Authorization (кратко)
 
 | | Authentication | Authorization |
 |---|----------------|---------------|
-| Вопрос | Кто вы? | Что вам можно? |
-| Пример | login / logout | только свой отзыв можно редактировать |
-| В Django | `django.contrib.auth` | permissions, groups, `login_required` |
+| Вопрос | Кто вы? | Что вам разрешено? |
+| Пример | login / logout | только **свой** отзыв можно редактировать |
 
-На этом уроке мы закрываем действия для **незалогиненных** пользователей. Разграничение "свой / не свой" отзыв - в Lesson 10.
+На **этом** уроке мы закрываем действия для **незалогиненных** пользователей. Проверка «свой / не свой» объект - в **Lesson 11**.
 
 ## Структура проекта
 
@@ -221,14 +221,14 @@ def review_create(request, pk):
 
 ## Товары vs отзывы: это не баг
 
-`product_create`, `product_update` и `product_delete` защищены только `@login_required`. **Любой** залогиненный пользователь может изменить любой товар - в отличие от отзывов в Lesson 10, где проверяется владелец.
+`product_create`, `product_update` и `product_delete` защищены только `@login_required`. **Любой** залогиненный пользователь может изменить любой товар - в отличие от отзывов в Lesson 11, где проверяется владелец.
 
 Это **намеренно** для курса:
 
 | Объект | Защита в Lesson 09 | Почему |
 |--------|-------------------|--------|
 | Товар | только `login_required` | каталог - «админский» контент; в реальном проекте товары обычно меняют через `/admin/` или staff permissions |
-| Отзыв | `login_required` + владелец (Lesson 10) | там мы изучаем **authorization** |
+| Отзыв | `login_required` + владелец (Lesson 11) | там мы изучаем **authorization** |
 
 `@login_required` отвечает: «вошёл ли пользователь?» Он **не** отвечает: «может ли этот пользователь менять этот товар?»
 
@@ -289,16 +289,16 @@ python manage.py test
 
 Вы должны уметь:
 
-- объяснить разницу между authentication и authorization;
 - зарегистрировать пользователя через `UserCreationForm`;
 - настроить login и logout;
 - использовать `request.user` и `user.is_authenticated` в шаблонах;
 - защитить view декоратором `login_required`;
-- настроить `LOGIN_URL` и `LOGIN_REDIRECT_URL`.
+- настроить `LOGIN_URL` и `LOGIN_REDIRECT_URL`;
+- коротко объяснить, что `login_required` - не то же самое, что проверка владельца объекта.
 
 ## Следующий урок
 
-[Lesson 10 - Profiles & Authorization (OneToOneField, ownership)](../10-profiles-reviews/README.md)
+[Lesson 10 - Profiles (OneToOneField)](../10-profiles/README.md)
 
 ## Предыдущий урок
 
