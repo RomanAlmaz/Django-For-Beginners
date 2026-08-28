@@ -1,8 +1,18 @@
 # Lesson 07 - CRUD
 
-Восьмой урок курса Django for Beginners. Вы продолжите проект из Lesson 06 и добавите **CRUD** для товаров на публичном сайте: создание, чтение, обновление и удаление через формы.
+Седьмой урок курса Django for Beginners. Вы продолжите проект из Lesson 06 и добавите **CRUD** для товаров на публичном сайте: создание, чтение, обновление и удаление через формы.
+
+## Что нужно знать до урока
+
+Модели, ORM, view-функции, шаблоны и обычные HTML-формы.
+
+## Что не нужно запоминать
+
+Весь Forms API. Важно увидеть повторяющийся путь: показать форму, проверить POST, сохранить и сделать redirect.
 
 ## Что изучается в этом уроке
+
+Главная тема - **CRUD**. `ModelForm`, GET, POST, validation, CSRF и redirect здесь выступают инструментами одного сценария, а не отдельными большими темами.
 
 - Create, Read, Update, Delete (CRUD);
 - Django forms;
@@ -13,28 +23,28 @@
 - `get_object_or_404`;
 - `redirect`.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-```bash
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 06
@@ -63,7 +73,7 @@ pip install -r requirements.txt
 CRUD - четыре базовые операции с данными:
 
 - **Create** - создать записи;
-- **Read** - прочитать (список или одну записи);
+- **Read** - прочитать (список или одну запись);
 - **Update** - изменить;
 - **Delete** - удалить.
 
@@ -107,7 +117,15 @@ Django автоматически создаст поля формы из пол
 
 **Список** - уже есть `products` view.
 
-**Одна записи** - `product_detail`:
+**Одна запись** - `product_detail`.
+
+Нам приходит `pk` из URL. Первый очевидный вариант:
+
+```python
+product = Product.objects.get(pk=pk)
+```
+
+Если товара нет, `.get()` вызовет `DoesNotExist`. Для страницы сайта удобнее готовый helper `get_object_or_404()`: он ищет объект и возвращает обычную страницу 404, если запись не найдена.
 
 ```python
 from django.shortcuts import get_object_or_404, render
@@ -144,7 +162,7 @@ def product_create(request):
         form = ProductForm()
 
     context = {
-        'page_title': 'Add Product',
+        'page_title': 'Добавить товар',
         'form': form,
     }
     return render(request, 'shop/product_form.html', context)
@@ -172,7 +190,7 @@ def product_update(request, pk):
         form = ProductForm(instance=product)
 
     context = {
-        'page_title': 'Edit Product',
+        'page_title': 'Редактировать товар',
         'form': form,
         'product': product,
     }
@@ -192,7 +210,7 @@ def product_delete(request, pk):
         return redirect('products')
 
     context = {
-        'page_title': 'Delete Product',
+        'page_title': 'Удалить товар',
         'product': product,
     }
     return render(request, 'shop/product_confirm_delete.html', context)
@@ -231,7 +249,7 @@ path('products/<int:pk>/delete/', views.product_delete, name='product_delete'),
         </div>
     {% endfor %}
 
-    <button type="submit">Save</button>
+    <button type="submit">Сохранить</button>
 </form>
 ```
 
@@ -252,13 +270,27 @@ python manage.py runserver
 
 | URL | Действие |
 |-----|----------|
-| [http://127.0.0.1:8000/products/](http://127.0.0.1:8000/products/) | Список + Add new product |
+| [http://127.0.0.1:8000/products/](http://127.0.0.1:8000/products/) | Список и ссылка «Добавить товар» |
 | [http://127.0.0.1:8000/products/create/](http://127.0.0.1:8000/products/create/) | Создать товар |
 | [http://127.0.0.1:8000/products/1/](http://127.0.0.1:8000/products/1/) | Детали товара |
 | [http://127.0.0.1:8000/products/1/edit/](http://127.0.0.1:8000/products/1/edit/) | Редактировать |
 | [http://127.0.0.1:8000/products/1/delete/](http://127.0.0.1:8000/products/1/delete/) | Удалить |
 
 Проверьте validation: отправьте форму с пустым name или отрицательной price.
+
+## Простой тест CRUD
+
+`shop/tests.py` отправляет POST на форму создания товара и проверяет redirect на новую страницу товара.
+
+```bash
+python manage.py test
+```
+
+## Проверь себя
+
+1. Что `ModelForm` берёт из модели автоматически?
+2. Почему GET показывает форму, а POST отправляет данные?
+3. Зачем после сохранения нужен redirect и зачем форме нужен CSRF token?
 
 ## Итог урока
 

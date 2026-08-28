@@ -1,6 +1,14 @@
 # Lesson 05 - Models
 
-Шестой урок курса Django for Beginners. Вы продолжите проект из Lesson 04 и добавите первые **модели** для магазина: `Category` и `Product`.
+Пятый урок курса Django for Beginners. Вы продолжите проект из Lesson 04 и добавите первые **модели** для магазина: `Category` и `Product`.
+
+## Что нужно знать до урока
+
+Базовые Python-классы, импорты, шаблоны и context.
+
+## Что не нужно запоминать
+
+SQL и все типы полей Django. Достаточно понять путь от класса модели до таблицы и ORM-запроса.
 
 ## Что изучается в этом уроке
 
@@ -19,15 +27,31 @@ Python class → Model → migration → таблица в базе → ORM → 
 
 ## Запуск
 
-```bash
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
+
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-source venv/Scripts/activate
+venv\Scripts\activate.bat
+```
+
+**Linux / macOS:**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+```bash
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
 После `migrate` база существует, но записей в ней ещё нет. В **Lesson 06** мы научимся создавать категории и товары через Django Admin.
+
+В этом уроке `shop/admin.py` пока пустой, поэтому модели ещё не видны в `/admin/`. Это не ошибка.
 
 ## Что уже было в Lesson 04
 
@@ -76,15 +100,19 @@ Model (модель) - Python-класс, который описывает ст
 Откройте `shop/models.py`:
 
 ```python
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator
 from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    name = models.CharField('название', max_length=100)
+    description = models.TextField('описание', blank=True)
 
     class Meta:
-        verbose_name_plural = 'categories'
+        verbose_name = 'категория'
+        verbose_name_plural = 'категории'
         ordering = ['name']
 
     def __str__(self):
@@ -92,13 +120,20 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=200)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField(blank=True)
-    is_featured = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    name = models.CharField('название', max_length=200)
+    price = models.DecimalField(
+        'цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
+    )
+    description = models.TextField('описание', blank=True)
+    is_featured = models.BooleanField('рекомендуемый', default=False)
+    created_at = models.DateTimeField('дата создания', auto_now_add=True)
 
     class Meta:
+        verbose_name = 'товар'
+        verbose_name_plural = 'товары'
         ordering = ['name']
 
     def __str__(self):
@@ -118,6 +153,8 @@ class Product(models.Model):
 `blank=True` означает, что поле может быть пустым в формах. `auto_now_add=True` автоматически записывает время создания.
 
 `__str__` - как объект отображается в админке и в shell (добавим админку в следующем уроке).
+
+`MinValueValidator` запрещает цену меньше `0.01`. Подписи вроде `'название'` Django позже покажет в формах и админке.
 
 ## Шаг 2. Миграции
 
@@ -153,9 +190,9 @@ from shop.models import Category, Product
 
 def home(request):
     context = {
-        'page_title': 'Home',
+        'page_title': 'Главная',
         'welcome_message': (
-            'Welcome to Django Shop! This is the home page of our online store.'
+            'Добро пожаловать в Django Shop! Это главная страница нашего магазина.'
         ),
         'categories': Category.objects.all(),
         'featured_products': Product.objects.filter(is_featured=True),
@@ -165,7 +202,7 @@ def home(request):
 
 def products(request):
     context = {
-        'page_title': 'Products',
+        'page_title': 'Товары',
         'products': Product.objects.all(),
     }
     return render(request, 'shop/products.html', context)
@@ -193,7 +230,7 @@ path('products/', views.products, name='products'),
 И ссылку в навигации `base.html`:
 
 ```html
-<a href="{% url 'products' %}">Products</a>
+<a href="{% url 'products' %}">Товары</a>
 ```
 
 На главной странице категории и избранные товары теперь приходят из базы, а не из словаря в view.
@@ -225,6 +262,20 @@ Product.objects.filter(price__gte=20)
 ```
 
 Shell - интерактивная консоль Python с доступом к Django. Удобно для экспериментов, не обязательна на этом уроке.
+
+## Первый простой тест
+
+Тесты подробно появятся позже. Сейчас достаточно посмотреть на `shop/tests.py`: Django создаёт временную базу, создаёт `Product` и проверяет результат.
+
+```bash
+python manage.py test
+```
+
+## Проверь себя
+
+1. Как Python-класс модели превращается в таблицу?
+2. Чем `makemigrations` отличается от `migrate`?
+3. Что возвращают `Product.objects.all()` и `.filter()`?
 
 ## Итог урока
 

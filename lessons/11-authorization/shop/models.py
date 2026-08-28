@@ -85,7 +85,7 @@ class Review(models.Model):
             MaxValueValidator(5, message='Оценка не может быть больше 5.'),
         ],
     )
-    text = models.TextField('текст')
+    text = models.TextField('текст отзыва')
     created_at = models.DateTimeField('дата', auto_now_add=True)
 
     class Meta:

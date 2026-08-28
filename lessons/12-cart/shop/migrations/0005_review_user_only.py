@@ -25,10 +25,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(
-            remove_reviews_without_user,
-            migrations.RunPython.noop,
-        ),
+        migrations.RunPython(remove_reviews_without_user),
         migrations.RemoveField(
             model_name='review',
             name='author_name',
@@ -48,8 +45,14 @@ class Migration(migrations.Migration):
             name='rating',
             field=models.PositiveSmallIntegerField(
                 validators=[
-                    django.core.validators.MinValueValidator(1),
-                    django.core.validators.MaxValueValidator(5),
+                    django.core.validators.MinValueValidator(
+                        1,
+                        message='Оценка не может быть меньше 1.',
+                    ),
+                    django.core.validators.MaxValueValidator(
+                        5,
+                        message='Оценка не может быть больше 5.',
+                    ),
                 ],
                 verbose_name='оценка',
             ),

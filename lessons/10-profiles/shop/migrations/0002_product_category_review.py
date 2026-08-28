@@ -14,19 +14,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='category',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='shop.category'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='products', to='shop.category', verbose_name='категория'),
         ),
         migrations.CreateModel(
             name='Review',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('author_name', models.CharField(max_length=100)),
-                ('rating', models.PositiveSmallIntegerField()),
-                ('text', models.TextField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='shop.product')),
+                ('author_name', models.CharField(max_length=100, verbose_name='имя автора')),
+                ('rating', models.PositiveSmallIntegerField(verbose_name='оценка')),
+                ('text', models.TextField(verbose_name='текст отзыва')),
+                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='дата')),
+                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='shop.product', verbose_name='товар')),
             ],
             options={
+                'verbose_name': 'отзыв',
+                'verbose_name_plural': 'отзывы',
                 'ordering': ['-created_at'],
             },
         ),

@@ -1,0 +1,83 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ product.name }}</h2>
+
+    {% if product.category %}
+        <p><strong>Категория:</strong> {{ product.category.name }}</p>
+    {% endif %}
+
+    <p><strong>Цена:</strong> {{ product.price }} руб.</p>
+
+    {% if product.description %}
+        <p>{{ product.description }}</p>
+    {% endif %}
+
+    {% if product.is_featured %}
+        <p class="badge">Товар на главной</p>
+    {% endif %}
+
+    <p class="meta">Добавлен: {{ product.created_at|date:"d.m.Y" }}</p>
+
+    <form method="post" action="{% url 'cart_add' product.pk %}" class="cart-add-form">
+        {% csrf_token %}
+        <label for="cart-quantity-{{ product.pk }}">Количество:</label>
+        <input type="number" id="cart-quantity-{{ product.pk }}" name="quantity" value="1" min="1" max="99">
+        <button type="submit">В корзину</button>
+    </form>
+
+    <p class="actions">
+        {% if user.is_authenticated %}
+            <a href="{% url 'product_update' product.pk %}">Редактировать</a>
+            {% if not product_has_orders %}
+                |
+                <a href="{% url 'product_delete' product.pk %}">Удалить</a>
+            {% endif %}
+            |
+        {% endif %}
+        <a href="{% url 'products' %}">Назад к товарам</a>
+    </p>
+
+    <h3>Отзывы ({{ reviews|length }})</h3>
+    {% if reviews %}
+        <ul class="review-list">
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.user.username }}</strong>
+                    - {{ review.rating }}/5
+                    <br>{{ review.text }}
+                    <span class="meta">{{ review.created_at|date:"d.m.Y" }}</span>
+                    {% if user.is_authenticated and review.user == user %}
+                        |
+                        <a href="{% url 'review_update' product.pk review.pk %}">Изменить</a>
+                        |
+                        <a href="{% url 'review_delete' product.pk review.pk %}">Удалить</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Отзывов пока нет. Оставьте первый.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <h3>Оставить отзыв</h3>
+        <form method="post" action="{% url 'review_create' product.pk %}" class="product-form">
+            {% csrf_token %}
+            {% for field in review_form %}
+                <div class="form-field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-errors">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Отправить отзыв</button>
+        </form>
+    {% else %}
+        <p><a href="{% url 'login' %}">Войдите</a>, чтобы оставить отзыв.</p>
+    {% endif %}
+{% endblock %}

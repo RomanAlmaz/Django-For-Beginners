@@ -23,10 +23,8 @@ def home(request):
         'welcome_message': (
             'Добро пожаловать в Django Shop! Это главная страница нашего магазина.'
         ),
-        'categories': Category.objects.prefetch_related('products'),
-        'featured_products': Product.objects.filter(is_featured=True).select_related(
-            'category'
-        ),
+        'categories': Category.objects.all(),
+        'featured_products': Product.objects.filter(is_featured=True),
     }
     return render(request, 'shop/home.html', context)
 
@@ -34,16 +32,13 @@ def home(request):
 def products(request):
     context = {
         'page_title': 'Товары',
-        'products': Product.objects.select_related('category').all(),
+        'products': Product.objects.all(),
     }
     return render(request, 'shop/products.html', context)
 
 
 def product_detail(request, pk):
-    product = get_object_or_404(
-        Product.objects.select_related('category').prefetch_related('reviews'),
-        pk=pk,
-    )
+    product = get_object_or_404(Product, pk=pk)
     review_form = ReviewForm() if request.user.is_authenticated else None
     return _render_product_detail(request, product, review_form)
 

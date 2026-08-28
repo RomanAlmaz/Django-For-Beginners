@@ -1,1 +1,5 @@
-﻿console.log('Django Shop: static JavaScript file loaded.');
+﻿const yearElement = document.querySelector('[data-current-year]');
+
+if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+}

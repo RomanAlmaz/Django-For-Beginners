@@ -1,0 +1,20 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    {% if has_orders %}
+        <p>Товар <strong>{{ product.name }}</strong> уже есть в заказах, поэтому удалить его нельзя.</p>
+        <p><a href="{% url 'product_detail' product.pk %}">Назад к товару</a></p>
+    {% else %}
+        <p>Вы уверены, что хотите удалить <strong>{{ product.name }}</strong>?</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Да, удалить</button>
+            <a href="{% url 'product_detail' product.pk %}">Отмена</a>
+        </form>
+    {% endif %}
+{% endblock %}

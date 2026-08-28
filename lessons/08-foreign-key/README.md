@@ -1,6 +1,14 @@
 # Lesson 08 - ForeignKey
 
-Девятый урок курса Django for Beginners. Вы продолжите проект из Lesson 07 и добавите **ForeignKey**: категория для товара и отзывы на товар.
+Восьмой урок курса Django for Beginners. Вы продолжите проект из Lesson 07 и добавите **ForeignKey**: категория для товара и отзывы на товар.
+
+## Что нужно знать до урока
+
+Модели, ORM, `ModelForm`, CRUD и `get_object_or_404()`.
+
+## Что не нужно запоминать
+
+Оптимизацию SQL и все типы связей. Сейчас нужны только `ForeignKey`, `on_delete` и `related_name`.
 
 ## Что изучается в этом уроке
 
@@ -15,22 +23,33 @@
 - `ForeignKey`, `on_delete`, `related_name`;
 - модель `Review` и обратные связи (`product.reviews.all()`, `category.products.all()`).
 
-OneToOneField и ManyToManyField - в следующих уроках (профиль и теги).
+`OneToOneField` появится в Lesson 10 для профиля. `ManyToManyField` изучим позже, когда для него появится реальная задача.
 
 ## Запуск
 
-Если virtual environment еще не создан:
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
+
+**Windows (Command Prompt):**
+
+```bat
+py -m venv venv
+venv\Scripts\activate.bat
+```
+
+**Linux / macOS:**
 
 ```bash
-py -m venv venv
-source venv/Scripts/activate
+python3 -m venv venv
+source venv/bin/activate
+```
+
+```bash
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
 Тестовые данные: через Admin (Lesson 06) или см. [Test data](../../TEST_DATA.md).
-```
 
 ## Что уже было в Lesson 07
 
@@ -47,6 +66,23 @@ python manage.py runserver
 2. Модель **Review** связана с **Product** через ForeignKey.
 3. На странице товара отображаются отзывы и форма добавления отзыва.
 4. На главной странице товары сгруппированы по категориям.
+
+## Основная часть
+
+```text
+ForeignKey
+    Product связан с Category
+    Review связан с Product
+
+related_name
+    category.products
+    product.reviews
+
+ModelForm
+    пользователь отправляет отзыв
+```
+
+Если вы впервые изучаете Django, пройдите только эту основную часть. Блок оптимизации ORM в конце можно полностью пропустить.
 
 ## Что такое связь между моделями
 
@@ -117,7 +153,7 @@ class Review(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.author_name} on {self.product.name}'
+        return f'{self.author_name} о {self.product.name}'
 ```
 
 `on_delete=models.CASCADE` - при удалении товара удалятся все его отзывы.
@@ -160,6 +196,17 @@ Django создаст миграцию `0002_product_category_review.py`.
 
 `shop/forms.py`:
 
+Сначала добавьте `category` в существующую форму товара:
+
+```python
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['category', 'name', 'price', 'description', 'is_featured']
+```
+
+Затем создайте форму отзыва:
+
 ```python
 class ReviewForm(forms.ModelForm):
     class Meta:
@@ -185,7 +232,20 @@ def review_create(request, pk):
     return redirect('product_detail', pk=product.pk)
 ```
 
-`commit=False` - сначала создаем объект в памяти, потом задаем `product`, потом сохраняем в базу.
+`commit=False` нужен, потому что поля `product` нет в форме. Товар определяет сервер по URL:
+
+```text
+form.save()
+    создать Review
+    сразу сохранить в базу
+
+form.save(commit=False)
+    создать Review только в памяти
+    добавить review.product на сервере
+    вызвать review.save()
+```
+
+То есть `commit=False` не отменяет сохранение навсегда. Он даёт время добавить данные, которым нельзя доверять пользовательскую форму.
 
 ### Ошибки валидации формы
 
@@ -235,38 +295,37 @@ rating = models.PositiveSmallIntegerField(
 )
 ```
 
+После добавления валидаторов снова выполните:
+
+```bash
+python manage.py makemigrations shop
+python manage.py migrate
+```
+
+Django создаст миграцию `0003_alter_review_rating.py`.
+
 `min` и `max` в HTML-форме - только подсказка в браузере. **Серверная** проверка должна быть в модели или форме. Так Django не сохранит `rating=999`, даже если кто-то отправит запрос вручную.
 
-## 💡 Дополнительно (не часть урока): select_related и prefetch_related
+## Дополнительно: оптимизация ORM
 
-**Сначала закрепите ForeignKey:**
+Этот блок можно пропустить. Сначала закрепите `product.category` и `category.products.all()`.
 
-```
-ForeignKey
-    ↓
-Product → Category
-    ↓
-product.category
-    ↓
-category.products.all()
-```
+При большом количестве объектов Django может выполнить слишком много SQL-запросов. Для оптимизации существуют `select_related()` и `prefetch_related()`. В коде урока их намеренно нет: они будут отдельной темой после основ Django ORM.
 
-Когда это понятно, можно читать про оптимизацию.
+## Простой тест ForeignKey
 
-Django при обходе связей иногда делает **дополнительные SQL-запросы** (проблема N+1). Для уменьшения числа запросов существуют:
+`shop/tests.py` создаёт категорию, товар и отзыв, а затем проверяет `category.products` и `product.reviews`.
 
-```python
-Product.objects.select_related('category')
-Category.objects.prefetch_related('products')
-Product.objects.prefetch_related('reviews')
+```bash
+python manage.py test
 ```
 
-| Метод | Когда |
-|-------|-------|
-| `select_related('category')` | ForeignKey - один JOIN |
-| `prefetch_related('reviews')` | обратная связь - отдельный запрос, но без N+1 |
+## Проверь себя
 
-В **коде этого урока** мы намеренно **не** используем эти методы - чтобы не отвлекать от ForeignKey. Изучите их позже, когда связи уже будут понятны.
+1. Что хранится в `Product.category`?
+2. Зачем нужен `related_name='products'`?
+3. Что произойдёт с товаром после удаления категории?
+4. Почему `SET_NULL` требует `null=True`?
 
 ## Итог урока
 

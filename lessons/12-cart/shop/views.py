@@ -1,11 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.db.models import Prefetch
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from shop.cart import (
+    add_to_cart,
+    get_cart_lines,
+    is_product_in_cart,
+    remove_from_cart,
+    update_cart_item,
+)
 from shop.forms import (
     ProductForm,
     ProfileForm,
@@ -13,7 +19,6 @@ from shop.forms import (
     ReviewForm,
     UserDetailsForm,
 )
-from shop.cart import add_to_cart, get_cart_lines, is_product_in_cart, remove_from_cart, update_cart_item
 from shop.models import Category, Product, Profile, Review
 
 
@@ -33,10 +38,8 @@ def home(request):
         'welcome_message': (
             'Добро пожаловать в Django Shop! Это главная страница нашего магазина.'
         ),
-        'categories': Category.objects.prefetch_related('products'),
-        'featured_products': Product.objects.filter(is_featured=True).select_related(
-            'category'
-        ),
+        'categories': Category.objects.all(),
+        'featured_products': Product.objects.filter(is_featured=True),
     }
     return render(request, 'shop/home.html', context)
 
@@ -44,19 +47,13 @@ def home(request):
 def products(request):
     context = {
         'page_title': 'Товары',
-        'products': Product.objects.select_related('category').all(),
+        'products': Product.objects.all(),
     }
     return render(request, 'shop/products.html', context)
 
 
 def product_detail(request, pk):
-    reviews_qs = Review.objects.select_related('user')
-    product = get_object_or_404(
-        Product.objects.select_related('category').prefetch_related(
-            Prefetch('reviews', queryset=reviews_qs),
-        ),
-        pk=pk,
-    )
+    product = get_object_or_404(Product, pk=pk)
     review_form = ReviewForm() if request.user.is_authenticated else None
     return _render_product_detail(request, product, review_form)
 
@@ -181,7 +178,7 @@ def review_delete(request, pk, review_pk):
 @login_required
 def profile(request):
     profile_obj, _ = Profile.objects.get_or_create(user=request.user)
-    reviews = Review.objects.filter(user=request.user).select_related('product')
+    reviews = Review.objects.filter(user=request.user)
 
     context = {
         'page_title': 'Мой профиль',

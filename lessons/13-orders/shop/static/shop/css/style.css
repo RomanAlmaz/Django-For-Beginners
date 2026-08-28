@@ -1,0 +1,394 @@
+:root {
+    --django-green: #334e5c;
+    --django-green-dark: #223640;
+    --accent: #d18752;
+    --django-bg: #eef1f2;
+    --surface: #fff;
+    --text-main: #29333a;
+    --text-muted: #66737b;
+    --border: #d3dadd;
+    --error: #a34740;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    color: var(--text-main);
+    background: var(--django-bg);
+}
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background: var(--django-green);
+    color: #fff;
+    padding: 1rem max(1.5rem, calc((100% - 1040px) / 2));
+    border-bottom: 4px solid var(--accent);
+}
+
+.site-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.site-brand h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0;
+}
+
+.site-nav a {
+    color: #f0c59f;
+    text-decoration: none;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+}
+
+.site-nav a:hover {
+    color: #fff;
+    border-bottom-color: var(--accent);
+}
+
+.site-main {
+    max-width: 1040px;
+    margin: 2rem auto;
+    padding: 2.25rem 2.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    box-shadow: 0 8px 24px rgba(51, 78, 92, 0.08);
+}
+
+.site-main a {
+    color: var(--django-green);
+}
+
+.site-main a:hover {
+    color: var(--accent);
+}
+
+.site-footer {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.product-list {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+}
+
+.product-list li {
+    padding: 1rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+}
+
+.meta {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.actions a {
+    color: var(--django-green);
+}
+
+.product-form {
+    max-width: 480px;
+}
+
+.form-field {
+    margin-bottom: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: var(--django-green-dark);
+}
+
+.form-field input[type="text"],
+.form-field input[type="email"],
+.form-field input[type="number"],
+.form-field input[type="password"],
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(209, 135, 82, 0.24);
+}
+
+.field-errors,
+.form-errors {
+    color: var(--error);
+    font-size: 0.9rem;
+}
+
+.help-text {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0.25rem 0 0;
+}
+
+button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+button.btn-danger {
+    background: var(--error);
+}
+
+button:hover {
+    filter: brightness(1.05);
+}
+
+.category-block {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.category-block h4 {
+    margin: 0 0 0.5rem;
+    color: var(--django-green);
+}
+
+.review-list {
+    display: grid;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+}
+
+.review-list li {
+    padding: 1rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+}
+
+.nav-user {
+    color: #fff;
+    margin-right: 0.5rem;
+}
+
+.logout-form {
+    display: inline;
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #f0c59f;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.link-button:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.message {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+}
+
+.message.success {
+    background: #e8f5f0;
+    color: var(--django-green-dark);
+    border: 1px solid var(--django-green);
+}
+
+.message.warning {
+    background: #fff8e6;
+    color: #6b5300;
+    border: 1px solid #e6c35c;
+}
+
+.message.error {
+    background: #fdecea;
+    color: #8a1f11;
+    border: 1px solid #e0a399;
+}
+
+h2 {
+    color: var(--django-green);
+    margin-top: 0;
+}
+
+h3 {
+    color: var(--django-green-dark);
+}
+
+.cart-add-form {
+    margin: 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.cart-add-form input[type="number"] {
+    width: 4.5rem;
+    padding: 0.35rem 0.5rem;
+}
+
+.cart-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.cart-table th {
+    background: #e8eef1;
+    color: var(--django-green-dark);
+}
+
+.cart-inline-form {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.cart-inline-form input[type="number"] {
+    width: 4rem;
+    padding: 0.25rem 0.35rem;
+}
+
+.cart-total {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f8fafb;
+    border-left: 4px solid var(--accent);
+}
+
+.cart-actions {
+    margin-top: 1rem;
+}
+
+.checkout-form {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary,
+.site-main a.btn-primary {
+    background: var(--django-green);
+    color: #fff;
+    border: none;
+    padding: 0.65rem 1.1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary:hover,
+.site-main a.btn-primary:hover {
+    background: var(--django-green-dark);
+    color: #fff;
+}
+
+.order-status {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    background: #e8eef1;
+    border: 1px solid #c8d5dc;
+    border-radius: 999px;
+    color: var(--django-green-dark);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 760px) {
+    .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .site-nav {
+        justify-content: flex-start;
+    }
+
+    .site-main {
+        margin: 1rem;
+        padding: 1.25rem;
+    }
+}

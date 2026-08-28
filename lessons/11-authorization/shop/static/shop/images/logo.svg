@@ -1,4 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Django Shop">
-  <rect width="64" height="64" rx="12" fill="#092e20"/>
-  <text x="32" y="40" text-anchor="middle" fill="#44b78b" font-family="Arial, sans-serif" font-size="28" font-weight="bold">D</text>
+  <rect width="64" height="64" rx="10" fill="#334e5c"/>
+  <text x="32" y="40" text-anchor="middle" fill="#f0c59f" font-family="Arial, sans-serif" font-size="28" font-weight="bold">D</text>
 </svg>

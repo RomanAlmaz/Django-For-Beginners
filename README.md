@@ -16,17 +16,34 @@
 
 ## Требования
 
-Перед началом желательно знать:
+Перед Django желательно уметь:
 
-- **базовый Python** (функции, классы, словари, импорты);
-- **основы HTML** (теги, атрибуты, формы);
-- **базовый CSS** (селекторы, отступы, цвета).
+**Python**
 
-**Предварительно знать Django не требуется.**
+- писать функции и вызывать методы;
+- использовать `if`, `for`, списки и словари;
+- работать с импортами и классами;
+- понимать обычный `try` / `except`.
+
+**HTML и CSS**
+
+- читать базовые HTML-теги, атрибуты и формы;
+- понимать простые CSS-селекторы, цвета и отступы.
+
+До курса не нужны:
+
+- Django;
+- SQL и глубокое знание HTTP;
+- JavaScript и CSS-фреймворки;
+- Docker, Linux, Redis и другие production-инструменты.
 
 ## Что такое Django
 
 Django - Python-фреймворк для веб-разработки. Он дает готовые инструменты для URL routing, форм, админ-панели, работы с базой данных и безопасности.
+
+## Почему Django стоит изучать
+
+Django позволяет сосредоточиться на логике сайта, а не писать с нуля вход пользователей, работу с базой и защиту форм. У него подробная документация, большое сообщество и понятная структура проекта.
 
 ## Что вы построите
 
@@ -40,6 +57,11 @@ Django - Python-фреймворк для веб-разработки. Он да
 
 | Урок | Одна главная тема |
 |------|-------------------|
+| 00 | Hello Django |
+| 01 | First View |
+| 02 | URLs |
+| 03 | Templates |
+| 04 | Static Files |
 | 05 | Models |
 | 06 | Admin |
 | 07 | CRUD |
@@ -48,10 +70,22 @@ Django - Python-фреймворк для веб-разработки. Он да
 | 10 | Profiles (OneToOneField) |
 | 11 | Authorization (ownership) |
 | 12 | Cart (sessions) |
+| 13 | Orders |
 
-Уроки 13-17 (в разработке): Orders, Pagination, Images, REST API, Production - **каждый отдельно**.
+Уроки 14-17 (в разработке): Pagination, Images, REST API, Production - **каждый отдельно**.
 
 **Каждый урок - отдельный рабочий проект.** Откройте папку в `lessons/`, `migrate`, `runserver`.
+
+## Уровень сложности
+
+- **Lessons 00-10** - основы Django: project, views, templates, models, forms и authentication.
+- **Lessons 11-13** - переход к реальному backend-коду: права на объекты, session-корзина и транзакции.
+
+Во второй части нормально возвращаться к предыдущим урокам. Не нужно запоминать все механизмы с первого раза.
+
+Lesson 13 завершает первый цельный курс. Pagination, search, API и production-настройки относятся к следующему уровню и не должны усложнять первые 14 уроков.
+
+Интерфейс тоже развивается постепенно: Lesson 04 добавляет базовые стили, Lesson 07 оформляет формы, а Lessons 11-13 переходят к более цельной responsive-вёрстке. Поэтому ранние уроки намеренно выглядят проще поздних.
 
 ## Roadmap
 
@@ -69,9 +103,9 @@ Django - Python-фреймворк для веб-разработки. Он да
 10. Profiles             - OneToOneField, profile page
 11. Authorization        - ownership, свои отзывы
 12. Cart                 - корзина через sessions
+13. Orders               - Order, OrderItem, checkout, transaction.atomic()
 
-🚧 Lessons 13-17 - в разработке:
-13. Orders               - заказы
+🚧 Lessons 14-17 - в разработке:
 14. Pagination           - постраничный список
 15. Images               - загрузка изображений
 16. REST API             - Django REST Framework
@@ -81,9 +115,10 @@ Django - Python-фреймворк для веб-разработки. Он да
 ## Структура репозитория
 
 ```
-django-for-beginners/
+Django-For-Beginners/
 ├── README.md
 ├── TEST_DATA.md
+├── TROUBLESHOOTING.md
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── .gitignore
@@ -95,6 +130,8 @@ django-for-beginners/
 ```
 
 Каждая папка в `lessons/` - **отдельный рабочий проект** на этом этапе курса. Откройте урок и запустите его независимо.
+
+> **Важно:** каждый урок - снимок проекта на конкретном этапе. Работайте только в папке выбранного урока и не переносите файлы между уроками вручную. Изменения, сделанные вами в Lesson 08, не появятся автоматически в Lesson 09: Lesson 09 уже содержит готовый снимок следующего этапа.
 
 ## Как начать
 
@@ -109,6 +146,8 @@ cd Django-For-Beginners/lessons/00-hello-django
 
 **Важно:** файл `db.sqlite3` не хранится в репозитории. База создается локально после `migrate`.
 
+Если команда или страница не работает, откройте [решение частых проблем](TROUBLESHOOTING.md).
+
 ## Test data (тестовые данные)
 
 Основной путь в курсе: **Models → migrate → Admin → создаём данные вручную**.
@@ -119,21 +158,32 @@ cd Django-For-Beginners/lessons/00-hello-django
 
 | | |
 |---|---|
-| Python | 3.10+ (автор Roman использует **3.14**) |
+| Python | **3.14.x** (рекомендуется; автор Roman проверял курс на **3.14.3**) |
 | Django | **5.2.12** (в `requirements.txt` каждого урока) |
-| Терминал | Git Bash на Windows (рекомендуется) |
+| Терминал | Command Prompt, PowerShell или Git Bash на Windows |
 | Git | для клонирования репозитория |
 
-Подойдет Python 3.10+. Курс разработан и проверен на Django **5.2.12**.
+Рекомендуется **Python 3.14.x**. Python 3.10-3.14 теоретически поддерживаются Django 5.2, но автор курса тестировал курс на **Python 3.14.3** и **Django 5.2.12**. Остальные версии диапазона отдельно в этом репозитории не тестируются.
 
-Файл `tests.py` в уроках 00-08 - стандартный шаблон Django. Тестирование появится в отдельной теме; в уроках 09+ есть простые примеры тестов.
+В Lessons 02-04 `tests.py` остаётся пустым шаблоном `startapp`. В Lessons 05-08 появляется по одному простому тесту для знакомства. С Lesson 09 тесты начинают проверять основные пользовательские сценарии.
 
-## Настройка окружения (один раз)
+## Настройка окружения для выбранного урока
+
+Сначала перейдите в папку нужного урока. Если virtual environment уже создан, повторно создавать его не нужно.
+
+**Windows (Command Prompt):**
+
+```bat
+py -m venv venv
+venv\Scripts\activate.bat
+pip install -r requirements.txt
+```
+
+**Linux / macOS:**
 
 ```bash
-py -m venv venv
-source venv/Scripts/activate   # Windows Git Bash
-# source venv/bin/activate     # Linux / macOS
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -154,6 +204,7 @@ pip install -r requirements.txt
 | 10 | Profiles (OneToOneField) | [lessons/10-profiles](lessons/10-profiles/) |
 | 11 | Authorization (ownership) | [lessons/11-authorization](lessons/11-authorization/) |
 | 12 | Cart (sessions) | [lessons/12-cart](lessons/12-cart/) |
+| 13 | Orders | [lessons/13-orders](lessons/13-orders/) |
 
 ## Итоговый проект
 

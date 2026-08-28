@@ -1,6 +1,14 @@
 # Lesson 09 - Authentication
 
-Десятый урок курса Django for Beginners. Вы продолжите проект из Lesson 08 и добавите **регистрацию, вход и выход** пользователей.
+Девятый урок курса Django for Beginners. Вы продолжите проект из Lesson 08 и добавите **регистрацию, вход и выход** пользователей.
+
+## Что нужно знать до урока
+
+Формы, POST, redirect, модели и ForeignKey.
+
+## Что не нужно запоминать
+
+Как Django хеширует пароли и хранит session внутри. Используйте готовые `UserCreationForm`, `LoginView` и `LogoutView`.
 
 ## Что изучается в этом уроке
 
@@ -14,28 +22,28 @@
 
 Разница authentication / authorization - коротко; ownership и permissions - в **Lesson 11**.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-```bash
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 08
@@ -66,9 +74,14 @@ user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 При создании отзыва:
 
 ```python
+review = form.save(commit=False)
+review.product = product
 review.user = request.user
 review.author_name = request.user.get_username()  # для совместимости с демо-данными
+review.save()
 ```
+
+Как и в Lesson 08, `commit=False` создаёт объект в памяти. Перед сохранением сервер сам добавляет товар и текущего пользователя.
 
 В Lesson 11 поле `author_name` будет удалено - отзыв будет принадлежать только `User`.
 
@@ -121,11 +134,28 @@ from django.contrib.auth.forms import UserCreationForm
 class RegisterForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         fields = UserCreationForm.Meta.fields + ('email',)
+        labels = {
+            'username': 'Имя пользователя',
+            'email': 'Почта',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].label = 'Имя пользователя'
+        self.fields['username'].help_text = 'Обязательное поле. До 150 символов.'
+        self.fields['password1'].label = 'Пароль'
+        self.fields['password2'].label = 'Подтверждение пароля'
+        self.fields['password1'].help_text = (
+            'Минимум 8 символов. Пароль не должен быть слишком простым.'
+        )
+        self.fields['password2'].help_text = 'Повторите пароль для проверки.'
 ```
 
-`UserCreationForm` - готовая форма Django с полями username, password1, password2 и валидацией пароля.
+`UserCreationForm` - готовая форма Django с полями username, password1, password2 и валидацией пароля. В `__init__` мы меняем только подписи и подсказки, логика проверки остаётся стандартной.
 
 ## Шаг 3. View register
+
+Сокращённая версия с основной логикой:
 
 ```python
 from django.contrib.auth import login
@@ -138,14 +168,28 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, 'Welcome to Django Shop!')
+            messages.success(request, 'Добро пожаловать в Django Shop!')
             return redirect('home')
     else:
         form = RegisterForm()
     return render(request, 'shop/register.html', {'form': form})
 ```
 
-`form.save()` создает записи User в базе. `login(request, user)` авторизует пользователя сразу после регистрации.
+`form.save()` создаёт запись User в базе. `login(request, user)` авторизует пользователя сразу после регистрации.
+
+`messages.success()` сохраняет короткое сообщение до следующей страницы. После redirect его показывает `base.html`:
+
+```django
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+```
+
+Это небольшой готовый механизм Django. Достаточно понимать: view создаёт сообщение, а базовый шаблон показывает его один раз.
 
 ## Шаг 4. Login и Logout
 
@@ -174,7 +218,7 @@ Logout в Django 5 отправляется через **POST** (безопас�
 ```html
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
-    <button type="submit">Logout</button>
+    <button type="submit">Выход</button>
 </form>
 ```
 
@@ -184,11 +228,14 @@ Logout в Django 5 отправляется через **POST** (безопас�
 
 ```html
 {% if user.is_authenticated %}
-    <span>Hi, {{ user.username }}</span>
-    ...
+    <span class="nav-user">Привет, {{ user.username }}</span>
+    <form method="post" action="{% url 'logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="link-button">Выход</button>
+    </form>
 {% else %}
-    <a href="{% url 'login' %}">Login</a>
-    <a href="{% url 'register' %}">Register</a>
+    <a href="{% url 'login' %}">Вход</a>
+    <a href="{% url 'register' %}">Регистрация</a>
 {% endif %}
 ```
 
@@ -219,11 +266,21 @@ def review_create(request, pk):
 - `product_create`, `product_update`, `product_delete`;
 - `review_create`.
 
-## Товары vs отзывы: это не баг
+## Важно: CRUD товаров специально упрощён
 
 `product_create`, `product_update` и `product_delete` защищены только `@login_required`. **Любой** залогиненный пользователь может изменить любой товар - в отличие от отзывов в Lesson 11, где проверяется владелец.
 
-Это **намеренно** для курса:
+> Это только учебное упрощение. В реальном магазине обычный пользователь не должен создавать, редактировать и удалять товары.
+
+```text
+Обычный User
+    профиль, отзывы, корзина, заказы
+
+Staff / Admin
+    управление каталогом товаров
+```
+
+Сравнение:
 
 | Объект | Защита в Lesson 09 | Почему |
 |--------|-------------------|--------|
@@ -232,7 +289,7 @@ def review_create(request, pk):
 
 `@login_required` отвечает: «вошёл ли пользователь?» Он **не** отвечает: «может ли этот пользователь менять этот товар?»
 
-В Lesson 16 и в реальных проектах для каталога используют Django Admin, группы (`is_staff`) или отдельные permissions - не открывают CRUD товаров для всех зарегистрированных.
+В реальных проектах для каталога используют Django Admin, `is_staff`, группы или отдельные permissions.
 
 ## Шаг 7. Отзывы от текущего пользователя
 
@@ -262,18 +319,42 @@ python manage.py runserver
 | Открыть `/products/create/` без входа | Редирект на login |
 | Register | Новый пользователь, вход выполнен |
 | Login / Logout | Сессия создается и завершается |
-| Добавить отзыв без входа | Ссылка "Log in to leave a review" |
-| Добавить отзыв после входа | Отзыв с вашим username |
+| Добавить отзыв без входа | Ссылка «Войдите, чтобы оставить отзыв» |
+| Добавить отзыв после входа | Отзыв с вашим именем пользователя |
 
 ## Тесты (введение)
 
-В `shop/tests.py` - простые тесты: редирект на login и валидация `rating` в модели.
+Django находит методы, имя которых начинается с `test_`, запускает их и сообщает: тест прошёл или упал.
+
+```text
+test_...
+    выполнить код
+    проверить assert
+    OK или FAILED
+```
+
+Минимальный тест страницы:
+
+```python
+class HomePageTests(TestCase):
+    def test_home_page(self):
+        response = Client().get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+```
+
+В `shop/tests.py` также есть проверки регистрации, редиректа на login и валидации `rating`.
 
 ```bash
 python manage.py test
 ```
 
 Тесты не обязательны для прохождения курса, но показывают, как Django проверяет код автоматически. В ранних уроках `tests.py` пустой - это нормально.
+
+## Проверь себя
+
+1. Чем authentication отличается от authorization?
+2. Что находится в `request.user` до и после входа?
+3. Что проверяет `@login_required`, а что он не проверяет?
 
 ## Итог урока
 
@@ -282,8 +363,8 @@ python manage.py test
 ## Домашнее задание
 
 1. После logout перенаправьте на страницу login вместо home (измените `LOGOUT_REDIRECT_URL`).
-2. Скройте кнопки Edit/Delete на странице товара для незалогиненных (уже в шаблоне - проверьте).
-3. Добавьте на страницу register текст с объяснением правил пароля Django.
+2. На странице `/contact/` покажите имя пользователя, если он вошёл (`user.is_authenticated`).
+3. Над формой регистрации (не в `help_text` полей) добавьте абзац своими словами: какие пароли Django считает слабыми.
 
 ## После этого урока
 

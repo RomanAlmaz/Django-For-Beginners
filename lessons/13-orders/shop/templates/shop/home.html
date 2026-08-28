@@ -1,0 +1,55 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+    <p>{{ welcome_message }}</p>
+
+    <h3>Категории и товары</h3>
+    {% if categories %}
+        {% for category in categories %}
+            <div class="category-block">
+                <h4>{{ category.name }}</h4>
+                {% if category.description %}
+                    <p class="meta">{{ category.description }}</p>
+                {% endif %}
+                {% if category.products.all %}
+                    <ul class="product-list">
+                        {% for product in category.products.all %}
+                            <li>
+                                <a href="{% url 'product_detail' product.pk %}">
+                                    {{ product.name }}
+                                </a>
+                                - {{ product.price }} руб.
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="meta">В этой категории пока нет товаров.</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Категорий пока нет.</p>
+    {% endif %}
+
+    <h3>Избранные товары</h3>
+    {% if featured_products %}
+        <ul class="product-list">
+            {% for product in featured_products %}
+                <li>
+                    <a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a>
+                    - {{ product.price }} руб.
+                    {% if product.category %}
+                        <span class="meta">({{ product.category.name }})</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Скоро появятся новые товары.</p>
+    {% endif %}
+
+    <p><a href="{% url 'products' %}">Все товары</a></p>
+{% endblock %}

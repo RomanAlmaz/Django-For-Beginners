@@ -26,7 +26,7 @@ pull request в основной репозиторий
 2. **Clone** - склонируйте fork на свой компьютер:
 
    ```bash
-   git clone https://github.com/RomanAlmaz/Django-For-Beginners.git
+   git clone https://github.com/YOUR_USERNAME/Django-For-Beginners.git
    cd Django-For-Beginners
    ```
 
@@ -46,20 +46,20 @@ pull request в основной репозиторий
 - опечатки и неточности в README;
 - улучшение объяснений для новичков;
 - исправления в коде уроков;
-- новые уроки (13 Orders, 14 Pagination и далее);
+- новые уроки (14 Pagination и далее);
 - переводы и локализация.
 
 ## Правила для pull request
 
 - **Один урок - одна папка.** Не смешивайте изменения из разных lessons без необходимости.
-- **Не коммитьте** `db.sqlite3`, `__pycache__/`, `*.pyc`, `venv/`.
+- **Не коммитьте** `db.sqlite3`, `__pycache__/`, `*.pyc`, `venv/`, `.cursor/`.
 - README уроков - на русском, без длинного тире (используйте обычный `-`).
 - Новый концепт - один урок, одна главная тема (см. `CURSOR_INSTRUCTIONS.txt`).
 - Если меняете код урока N, проверьте, что проект запускается: `migrate` + `runserver`.
 
 ## Новый урок
 
-Если добавляете урок (например Lesson 13 - Orders):
+Если добавляете урок (например Lesson 14 - Pagination):
 
 1. Скопируйте проект из предыдущего урока как базу.
 2. Добавьте только одну новую тему.

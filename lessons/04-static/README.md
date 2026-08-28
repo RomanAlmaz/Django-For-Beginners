@@ -1,6 +1,14 @@
 # Lesson 04 - Static Files
 
-Пятый урок курса Django for Beginners. Вы продолжите проект из Lesson 03 и подключите **статические файлы**: CSS, JavaScript и изображения.
+Четвертый урок курса Django for Beginners. Вы продолжите проект из Lesson 03 и подключите **статические файлы**: CSS, JavaScript и изображения.
+
+## Что нужно знать до урока
+
+Как устроены `base.html`, `{% extends %}` и `{% block %}`.
+
+## Что не нужно запоминать
+
+DOM API и весь CSS. Главная цель - понять, как Django находит и подключает static files.
 
 ## Что изучается в этом уроке
 
@@ -13,28 +21,28 @@
 - JavaScript;
 - images.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-```bash
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 03
@@ -81,17 +89,17 @@ Django не вставляет CSS в шаблон вручную. Шаблон 
 
 Создайте `shop/static/shop/css/style.css` с базовыми стилями для header, nav, main и footer.
 
-Пример:
+Сокращённый пример. В готовом `style.css` те же цвета вынесены в CSS variables, чтобы не повторять значения:
 
 ```css
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background: #f5f5f5;
+    background: #eef1f2;
 }
 
 .site-header {
-    background: #092e20;
+    background: #334e5c;
     color: #fff;
     padding: 1rem 1.5rem;
 }
@@ -102,12 +110,22 @@ body {
 Создайте `shop/static/shop/js/main.js`:
 
 ```javascript
-console.log('Django Shop: static JavaScript file loaded.');
+const yearElement = document.querySelector('[data-current-year]');
+
+if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+}
 ```
 
-Этот урок про **Django static files**, а не про JavaScript. Мы показываем, что Django может раздавать `.js` файлы так же, как CSS. Изучение JavaScript - отдельная тема.
+В footer есть элемент:
 
-Откройте DevTools в браузере (F12) → Console - увидите сообщение при загрузке страницы.
+```html
+<span data-current-year>2026</span>
+```
+
+После загрузки страницы JavaScript подставляет текущий год. Результат виден прямо на сайте.
+
+Этот урок про **Django static files**, а не про DOM и JavaScript. Сейчас достаточно понять: браузер загрузил `main.js`, выполнил его и изменил HTML.
 
 ## Шаг 3. Изображение
 
@@ -130,7 +148,7 @@ console.log('Django Shop: static JavaScript file loaded.');
 Логотип в header:
 
 ```html
-<img src="{% static 'shop/images/logo.svg' %}" alt="Django Shop logo" width="40" height="40">
+<img src="{% static 'shop/images/logo.svg' %}" alt="Логотип Django Shop" width="40" height="40">
 ```
 
 JavaScript перед закрывающим `</body>`:
@@ -138,6 +156,8 @@ JavaScript перед закрывающим `</body>`:
 ```html
 <script src="{% static 'shop/js/main.js' %}" defer></script>
 ```
+
+Атрибут `defer` запускает скрипт после чтения HTML. Поэтому JavaScript сможет найти элемент footer.
 
 ### Важные теги
 
@@ -168,10 +188,16 @@ python manage.py runserver
 
 Вы должны увидеть:
 
-- зеленый header с логотипом;
+- тёмный серо-синий header с медной линией;
 - стилизованную навигацию;
-- белый блок контента на сером фоне;
-- в footer текущий год (из JavaScript).
+- белый блок контента на светло-сером фоне;
+- текущий год в footer, который подставил JavaScript.
+
+## Проверь себя
+
+1. Чем static file отличается от HTML-шаблона?
+2. Зачем в шаблоне нужен `{% load static %}`?
+3. Как путь `shop/static/shop/css/style.css` связан с `{% static %}`?
 
 ## Итог урока
 
@@ -180,8 +206,8 @@ python manage.py runserver
 ## Домашнее задание
 
 1. Измените цвет header в `style.css` и проверьте, что стиль обновился после перезагрузки страницы.
-2. Добавьте класс `.product-list` для списка товаров на главной странице.
-3. В `main.js` добавьте `console.log('Django Shop loaded')` и откройте DevTools в браузере.
+2. Измените цвет текста в `.site-footer` и проверьте footer в браузере.
+3. Замените текст в footer (`base.html`) на свой.
 
 ## После этого урока
 

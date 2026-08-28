@@ -1,6 +1,14 @@
 # Lesson 02 - URLs
 
-Третий урок курса Django for Beginners. Вы продолжите проект из Lesson 01 и настроите несколько URL-адресов для страниц магазина.
+Второй урок курса Django for Beginners. Вы продолжите проект из Lesson 01 и настроите несколько URL-адресов для страниц магазина.
+
+## Что нужно знать до урока
+
+Что такое view, `HttpResponse` и `path()`.
+
+## Что не нужно запоминать
+
+Назначение всех файлов, созданных `startapp`. В этом уроке нужны только `views.py`, `urls.py` и `apps.py`.
 
 ## Что изучается в этом уроке
 
@@ -12,34 +20,28 @@
 - `include()`;
 - `HttpResponse`.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-Для работы с репозиторием нужен **Git**. На Windows для терминала лучше всего использовать **Git Bash**.
+**Windows (Command Prompt):**
 
-Создание и активация virtual environment:
-
-```bash
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-Установка зависимостей:
-
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 01
@@ -96,6 +98,8 @@ Django создаст папку `shop` с базовыми файлами. В �
 - `urls.py` - URL-адреса приложения (файл создаем вручную);
 - `apps.py` - конфигурация приложения.
 
+Django также создаёт пустые `models.py`, `admin.py` и `tests.py`. Сейчас их менять не нужно: модели появятся в Lesson 05, админка - в Lesson 06, тесты - позже.
+
 ## Шаг 2. Регистрация app в INSTALLED_APPS
 
 Django должен знать о новом приложении. Откройте `django_shop/settings.py` и добавьте `shop`:
@@ -120,25 +124,25 @@ from django.http import HttpResponse
 
 def home(request):
     return HttpResponse(
-        "Welcome to Django Shop! This is the home page of our online store."
+        "Добро пожаловать в Django Shop! Это главная страница нашего магазина."
     )
 
 
 def about(request):
     return HttpResponse(
-        "About Django Shop: a beginner-friendly project to learn Django step by step."
+        "Django Shop - учебный проект для пошагового изучения Django."
     )
 
 
 def contact(request):
     return HttpResponse(
-        "Contact us: hello@djangoshop.example (this is a demo page for learning)."
+        "Свяжитесь с нами: hello@djangoshop.example (демо-страница для обучения)."
     )
 ```
 
 Каждая view получает `request` (данные HTTP-запроса) и возвращает `HttpResponse` (текст для браузера).
 
-View из Lesson 01 (`django_shop/views.py`) в этом уроке больше не нужна. Страницы магазина живут в приложении `shop`.
+View из Lesson 01 больше не нужна. Удалите `django_shop/views.py`: теперь страницы магазина живут только в приложении `shop`. Это оставляет одно понятное место для view-функций.
 
 ## Шаг 4. URL routing в приложении
 
@@ -159,8 +163,8 @@ urlpatterns = [
 Здесь:
 
 - `''` - главная страница (`/`);
-- `'about/'` - страница About (`/about/`);
-- `'contact/'` - страница Contact (`/contact/`);
+- `'about/'` - страница «О сайте» (`/about/`);
+- `'contact/'` - страница «Контакты» (`/contact/`);
 - `name` - уникальное имя URL внутри приложения.
 
 ## Шаг 5. Подключение URLs приложения к проекту
@@ -191,9 +195,15 @@ python manage.py runserver
 
 | URL | Страница |
 |-----|----------|
-| [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Home |
-| [http://127.0.0.1:8000/about/](http://127.0.0.1:8000/about/) | About |
-| [http://127.0.0.1:8000/contact/](http://127.0.0.1:8000/contact/) | Contact |
+| [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Главная |
+| [http://127.0.0.1:8000/about/](http://127.0.0.1:8000/about/) | О сайте |
+| [http://127.0.0.1:8000/contact/](http://127.0.0.1:8000/contact/) | Контакты |
+
+## Проверь себя
+
+1. Чем project отличается от app?
+2. Зачем нужен `include('shop.urls')`?
+3. Почему view магазина теперь находятся в `shop/views.py`?
 
 ## Итог урока
 

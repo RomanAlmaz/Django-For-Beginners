@@ -3,6 +3,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Django Shop{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
 </head>
@@ -18,7 +19,6 @@
             <a href="{% url 'cart' %}">Корзина{% if cart_item_count %} ({{ cart_item_count }}){% endif %}</a>
             <a href="{% url 'about' %}">О сайте</a>
             <a href="{% url 'contact' %}">Контакты</a>
-            |
             {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}">Профиль</a>
                 <span class="nav-user">Привет, {{ user.username }}</span>
@@ -47,7 +47,7 @@
     </main>
 
     <footer class="site-footer">
-        <p>Django Shop - учебный проект. Создано: Roman</p>
+        <p>Django Shop - учебный проект. Roman, <span data-current-year>2026</span>.</p>
     </footer>
 
     <script src="{% static 'shop/js/main.js' %}" defer></script>

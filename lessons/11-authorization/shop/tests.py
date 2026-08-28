@@ -7,6 +7,12 @@ from django.urls import reverse
 from shop.models import Product, Profile, Review
 
 
+class HomePageTests(TestCase):
+    def test_home_page(self):
+        response = Client().get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+
 class ReviewOwnershipTests(TestCase):
     def setUp(self):
         self.product = Product.objects.create(name='Книга', price=Decimal('10.00'))
@@ -34,11 +40,28 @@ class ReviewOwnershipTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('login'), response.url)
 
+    def test_anonymous_redirected_to_login_on_delete(self):
+        response = Client().get(self.delete_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
     def test_owner_can_edit(self):
         client = Client()
         client.login(username='owner', password='pass12345')
         response = client.get(self.edit_url)
         self.assertEqual(response.status_code, 200)
+
+    def test_owner_can_submit_edit(self):
+        client = Client()
+        client.login(username='owner', password='pass12345')
+        response = client.post(
+            self.edit_url,
+            {'rating': 4, 'text': 'Обновлённый отзыв'},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.review.refresh_from_db()
+        self.assertEqual(self.review.rating, 4)
+        self.assertEqual(self.review.text, 'Обновлённый отзыв')
 
     def test_other_user_gets_404_on_edit(self):
         client = Client()
@@ -63,6 +86,18 @@ class ReviewOwnershipTests(TestCase):
         response = client.post(self.delete_url)
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Review.objects.filter(pk=self.review.pk).exists())
+
+    def test_owner_can_open_delete_confirmation(self):
+        client = Client()
+        client.login(username='owner', password='pass12345')
+        response = client.get(self.delete_url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_other_user_gets_404_on_delete_get(self):
+        client = Client()
+        client.login(username='other', password='pass12345')
+        response = client.get(self.delete_url)
+        self.assertEqual(response.status_code, 404)
 
     def test_other_user_gets_404_on_delete_post(self):
         client = Client()

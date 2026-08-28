@@ -1,6 +1,5 @@
 from decimal import Decimal
 
-from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -8,10 +7,17 @@ from shop.cart import (
     MAX_CART_QUANTITY,
     add_to_cart,
     get_cart_item_count,
+    is_product_in_cart,
     remove_from_cart,
     update_cart_item,
 )
 from shop.models import Product
+
+
+class HomePageTests(TestCase):
+    def test_home_page(self):
+        response = Client().get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
 
 
 class CartLogicTests(TestCase):
@@ -41,11 +47,19 @@ class CartLogicTests(TestCase):
         session.save()
         self.assertEqual(get_cart_item_count(self.client.session), MAX_CART_QUANTITY)
 
-    def test_negative_quantity_treated_as_one(self):
+    def test_invalid_quantity_defaults_to_one(self):
         session = self.client.session
         add_to_cart(session, self.product.pk, -5)
         session.save()
         self.assertEqual(get_cart_item_count(self.client.session), 1)
+
+    def test_invalid_product_key_is_removed(self):
+        session = self.client.session
+        session['cart'] = {str(self.product.pk): 2, 'abc': 1}
+        session.save()
+        response = self.client.get(reverse('cart'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(get_cart_item_count(self.client.session), 2)
 
     def test_update_zero_removes_item(self):
         session = self.client.session
@@ -63,12 +77,6 @@ class CartLogicTests(TestCase):
         session.save()
         self.assertEqual(get_cart_item_count(self.client.session), 0)
 
-    def test_corrupted_session_key_ignored(self):
-        session = self.client.session
-        session['cart'] = {'abc': 5, str(self.product.pk): 2}
-        session.save()
-        self.assertEqual(get_cart_item_count(self.client.session), 2)
-
     def test_deleted_product_removed_from_count(self):
         session = self.client.session
         add_to_cart(session, self.product.pk, 3)
@@ -77,8 +85,6 @@ class CartLogicTests(TestCase):
         self.assertEqual(get_cart_item_count(self.client.session), 0)
 
     def test_is_product_in_cart(self):
-        from shop.cart import is_product_in_cart
-
         session = self.client.session
         self.assertFalse(is_product_in_cart(session, self.product.pk))
         add_to_cart(session, self.product.pk, 2)

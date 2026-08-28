@@ -1,26 +1,64 @@
 # Lesson 03 - Templates
 
-Четвертый урок курса Django for Beginners. Вы продолжите проект из Lesson 02 и замените простой текст на HTML-шаблоны.
+Третий урок курса Django for Beginners. Вы продолжите проект из Lesson 02 и замените простой текст на HTML-шаблоны.
+
+## Что нужно знать до урока
+
+Как view связана с URL, а также базовые HTML-теги.
+
+## Что не нужно запоминать
+
+Все template tags сразу. Проходите урок по мини-этапам и возвращайтесь к примерам.
 
 ## Что изучается в этом уроке
+
+**Основное** (это нужно пройти):
 
 - templates (шаблоны);
 - `render()`;
 - context (контекст);
 - переменные шаблона `{{ variable }}`;
-- `{% if %}`;
-- `{% for %}`;
-- наследование шаблонов;
-- `base.html`;
-- `{% extends %}` и `{% block %}`;
-- `{% url %}`.
+- `{% extends %}` и `{% block %}`.
+
+**Дополнительно** (можно прочитать после рабочего примера):
+
+- template tags: `{% if %}`, `{% for %}`, `{% url %}`;
+- filters;
+- CSRF (краткий взгляд вперёд).
+
+## Маршрут урока
+
+Сначала только основное. Не пытайтесь запомнить все теги сразу.
+
+| Этап | Сначала понять |
+|------|----------------|
+| 1 | `render()` открывает HTML-шаблон |
+| 2 | context передаёт данные, `{{ variable }}` выводит их |
+| 3 | `base.html`, `{% extends %}` и `{% block %}` убирают копирование общего HTML |
+
+`{% if %}`, `{% for %}`, `{% url %}`, filters и CSRF разобраны в блоке **Дополнительно**. В готовых шаблонах урока они уже есть: сначала скопируйте, затем прочитайте объяснение.
 
 ## Запуск
 
-```bash
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
+
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-source venv/Scripts/activate
+venv\Scripts\activate.bat
+```
+
+**Linux / macOS:**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+```bash
 pip install -r requirements.txt
+python manage.py migrate
 python manage.py runserver
 ```
 
@@ -37,33 +75,6 @@ python manage.py runserver
 ## Что добавляется в этом уроке
 
 Мы переносим HTML в шаблоны и передаем данные из view через **context**.
-
-## Порядок изучения шаблонов
-
-Изучайте по шагам, не всё сразу:
-
-1. `render()` и `{{ variable }}` - данные из view в HTML.
-2. `{% if %}` и `{% for %}` - условия и циклы.
-3. `{% extends %}` и `{% block %}` - общий `base.html`.
-4. `{% url %}` - ссылки по имени URL.
-
-### Зачем `{% url %}` вместо `/about/`
-
-Плохо (жёсткий путь):
-
-```html
-<a href="/about/">О сайте</a>
-```
-
-Если URL изменится в `urls.py`, все ссылки в шаблонах нужно править вручную.
-
-Хорошо:
-
-```html
-<a href="{% url 'about' %}">О сайте</a>
-```
-
-Django строит путь из `name='about'` в `urls.py`. Одно место правды.
 
 ## Что такое template
 
@@ -108,20 +119,19 @@ Django ищет шаблоны в папке `templates/` внутри кажд�
 
 ```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Django Shop{% endblock %}</title>
 </head>
 <body>
     <header>
         <h1>Django Shop</h1>
         <nav>
-            <a href="{% url 'home' %}">Home</a>
-            |
-            <a href="{% url 'about' %}">About</a>
-            |
-            <a href="{% url 'contact' %}">Contact</a>
+            <a href="{% url 'home' %}">Главная</a>
+            <a href="{% url 'about' %}">О сайте</a>
+            <a href="{% url 'contact' %}">Контакты</a>
         </nav>
     </header>
 
@@ -131,14 +141,14 @@ Django ищет шаблоны в папке `templates/` внутри кажд�
     </main>
 
     <footer>
-        <p>Django Shop - learning project</p>
+        <p>Django Shop - учебный проект. Создано: Roman</p>
     </footer>
 </body>
 </html>
 ```
 
 - `{% block title %}` и `{% block content %}` - области, которые дочерние шаблоны могут переопределить;
-- `{% url 'home' %}` - Django строит ссылку по имени URL из `urls.py`.
+- `{% url 'home' %}` уже стоит в навигации. Как он работает, разберём в блоке **Дополнительно**.
 
 ## Шаг 2. Шаблон home.html
 
@@ -153,25 +163,26 @@ Django ищет шаблоны в папке `templates/` внутри кажд�
     <h2>{{ page_title }}</h2>
     <p>{{ welcome_message }}</p>
 
-    <h3>Featured products</h3>
+    <h3>Избранные товары</h3>
     {% if featured_products %}
         <ul>
             {% for product in featured_products %}
-                <li>{{ product.name }} - ${{ product.price }}</li>
+                <li>{{ product.name }} - {{ product.price }} руб.</li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>New products coming soon.</p>
+        <p>Скоро появятся новые товары.</p>
     {% endif %}
 {% endblock %}
 ```
 
-Здесь:
+Здесь основное:
 
 - `{% extends 'shop/base.html' %}` - шаблон наследует общую структуру;
-- `{{ page_title }}` - переменная из context;
-- `{% if featured_products %}` - условие: список не пустой;
-- `{% for product in featured_products %}` - цикл по списку товаров.
+- `{% block title %}` и `{% block content %}` - заполняют области из `base.html`;
+- `{{ page_title }}` - переменная из context.
+
+`{% if %}` и `{% for %}` в этом файле разберём в блоке **Дополнительно**.
 
 ## Шаг 3. View с render() и context
 
@@ -183,14 +194,14 @@ from django.shortcuts import render
 
 def home(request):
     context = {
-        'page_title': 'Home',
+        'page_title': 'Главная',
         'welcome_message': (
-            'Welcome to Django Shop! This is the home page of our online store.'
+            'Добро пожаловать в Django Shop! Это главная страница нашего магазина.'
         ),
         'featured_products': [
-            {'name': 'Python Mug', 'price': '12.99'},
-            {'name': 'Django T-Shirt', 'price': '24.99'},
-            {'name': 'Coding Stickers', 'price': '5.99'},
+            {'name': 'Кружка Python', 'price': '12.99'},
+            {'name': 'Футболка Django', 'price': '24.99'},
+            {'name': 'Стикеры для кодинга', 'price': '5.99'},
         ],
     }
     return render(request, 'shop/home.html', context)
@@ -212,7 +223,7 @@ def home(request):
     <p>{{ about_text }}</p>
 
     {% if team_members %}
-        <h3>Our team</h3>
+        <h3>Наша команда</h3>
         <ul>
             {% for member in team_members %}
                 <li>{{ member }}</li>
@@ -232,7 +243,7 @@ def home(request):
 {% block content %}
     <h2>{{ page_title }}</h2>
     <p>{{ contact_text }}</p>
-    <p>Email: {{ email }}</p>
+    <p><strong>Почта:</strong> {{ email }}</p>
 {% endblock %}
 ```
 
@@ -243,13 +254,13 @@ def home(request):
 ```python
 def about(request):
     context = {
-        'page_title': 'About',
+        'page_title': 'О сайте',
         'about_text': (
-            'About Django Shop: a beginner-friendly project to learn Django step by step.'
+            'Django Shop - учебный проект для пошагового изучения Django.'
         ),
         'team_members': [
-            'Alex - course author',
-            'Django - our favorite framework',
+            'Roman - автор курса',
+            'Django - наш любимый фреймворк',
         ],
     }
     return render(request, 'shop/about.html', context)
@@ -267,11 +278,58 @@ python manage.py runserver
 
 | URL | Что вы увидите |
 |-----|----------------|
-| [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Home с навигацией и списком товаров |
-| [http://127.0.0.1:8000/about/](http://127.0.0.1:8000/about/) | About с списком team members |
-| [http://127.0.0.1:8000/contact/](http://127.0.0.1:8000/contact/) | Contact с email из context |
+| [http://127.0.0.1:8000/](http://127.0.0.1:8000/) | Главная с навигацией и списком товаров |
+| [http://127.0.0.1:8000/about/](http://127.0.0.1:8000/about/) | Страница «О сайте» со списком участников |
+| [http://127.0.0.1:8000/contact/](http://127.0.0.1:8000/contact/) | Контакты с email из context |
 
 На всех страницах общий header, nav и footer из `base.html`.
+
+## Дополнительно
+
+Этот блок не обязателен, чтобы страницы заработали. Он помогает прочитать теги, которые уже стоят в шаблонах урока.
+
+### Template tags: `{% if %}`, `{% for %}`, `{% url %}`
+
+В `home.html` уже есть условие и цикл:
+
+- `{% if featured_products %}` - показать список, только если он не пустой;
+- `{% for product in featured_products %}` - повторить разметку для каждого товара.
+
+В `base.html` ссылки построены так:
+
+```html
+<a href="{% url 'about' %}">О сайте</a>
+```
+
+Плохо (жёсткий путь):
+
+```html
+<a href="/about/">О сайте</a>
+```
+
+Если URL изменится в `urls.py`, все такие ссылки нужно править вручную. `{% url 'about' %}` берёт путь из `name='about'`. Одно место правды.
+
+### Filters
+
+В шаблоне можно изменить значение перед выводом:
+
+```html
+{{ product.name|upper }}
+```
+
+`upper` - filter: делает буквы заглавными. На этом уроке filters не нужны. Запомните только: `{{ variable }}` выводит значение, `|filter` меняет его. Подробнее встретите позже.
+
+### CSRF: взгляд вперёд
+
+Когда появится HTML-форма с POST (логин, отзыв, корзина), Django потребует скрытое поле `{% csrf_token %}`. Это защита от поддельных запросов с чужого сайта.
+
+Сейчас форм с POST в уроке нет, поэтому CSRF можно не настраивать. Просто знайте имя тега: вы увидите его в следующих уроках.
+
+## Проверь себя
+
+1. Что передаёт словарь `context` в шаблон?
+2. Зачем нужны `base.html`, `{% extends %}` и `{% block %}`?
+3. Чем `{% if %}` отличается от `{% for %}`? (блок **Дополнительно**)
 
 ## Итог урока
 
@@ -279,7 +337,7 @@ python manage.py runserver
 
 ## Домашнее задание
 
-1. Добавьте в context на главной странице поле `store_open` (True/False) и в шаблоне покажите "Store is open" или "Store is closed" через `{% if %}`.
+1. Добавьте в context на главной странице поле `store_open` (`True` / `False`) и через `{% if %}` покажите «Магазин открыт» или «Магазин закрыт» (см. блок **Дополнительно**).
 2. Добавьте четвертый товар в `featured_products` и проверьте, что он появился в списке.
 3. Создайте шаблон `help.html` и страницу `/help/` с коротким текстом помощи (используйте `extends` и `render`).
 
@@ -291,9 +349,9 @@ python manage.py runserver
 - использовать `render(request, template, context)`;
 - передавать данные в шаблон через context;
 - выводить переменные через `{{ variable }}`;
-- использовать `{% if %}` и `{% for %}`;
-- создать `base.html` и расширять его через `{% extends %}` и `{% block %}`;
-- строить ссылки через `{% url %}`.
+- создать `base.html` и расширять его через `{% extends %}` и `{% block %}`.
+
+Если прочитали блок **Дополнительно**: читать `{% if %}`, `{% for %}` и `{% url %}` в готовом шаблоне.
 
 ## Следующий урок
 

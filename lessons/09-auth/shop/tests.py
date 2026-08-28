@@ -8,6 +8,31 @@ from django.urls import reverse
 from shop.models import Product, Review
 
 
+class HomePageTests(TestCase):
+    def test_home_page(self):
+        response = Client().get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+
+class RegistrationTests(TestCase):
+    def test_register_creates_user_and_logs_in(self):
+        client = Client()
+        response = client.post(
+            reverse('register'),
+            {
+                'username': 'newbie',
+                'email': 'newbie@example.com',
+                'password1': 'StrongPass123!',
+                'password2': 'StrongPass123!',
+            },
+        )
+
+        self.assertRedirects(response, reverse('home'))
+        user = User.objects.get(username='newbie')
+        self.assertEqual(user.email, 'newbie@example.com')
+        self.assertEqual(int(client.session['_auth_user_id']), user.pk)
+
+
 class LoginRequiredTests(TestCase):
     def test_product_create_redirects_anonymous_user_to_login(self):
         response = Client().get(reverse('product_create'))

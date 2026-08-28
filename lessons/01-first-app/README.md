@@ -1,6 +1,14 @@
 # Lesson 01 - First View
 
-Второй урок курса Django for Beginners. Вы продолжите проект из Lesson 00 и добавите **одну** простую страницу.
+Первый урок курса Django for Beginners. Вы продолжите проект из Lesson 00 и добавите **одну** простую страницу.
+
+## Что нужно знать до урока
+
+Как запустить проект из Lesson 00 и где находится `django_shop/urls.py`.
+
+## Что не нужно запоминать
+
+Внутреннее устройство HTTP. Достаточно понять: URL вызывает view, а view возвращает ответ.
 
 ## Что изучается в этом уроке
 
@@ -9,34 +17,28 @@
 - URL routing;
 - `path()`.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-Для работы с репозиторием нужен **Git**. На Windows для терминала лучше всего использовать **Git Bash**.
+**Windows (Command Prompt):**
 
-Создание и активация virtual environment:
-
-```bash
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
-Установка зависимостей:
-
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 00
@@ -77,7 +79,7 @@ from django.http import HttpResponse
 
 
 def hello(request):
-    return HttpResponse("Hello, Django! Welcome to Django Shop.")
+    return HttpResponse("Привет, Django! Добро пожаловать в Django Shop.")
 ```
 
 `HttpResponse` - простой способ вернуть текст в браузер. Позже мы будем использовать HTML-шаблоны.
@@ -111,9 +113,15 @@ python manage.py runserver
 
 Откройте в браузере: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-Вы должны увидеть текст: `Hello, Django! Welcome to Django Shop.`
+Вы должны увидеть текст: `Привет, Django! Добро пожаловать в Django Shop.`
 
 Ракеты больше нет - вместо неё ваша первая страница.
+
+## Проверь себя
+
+1. Какая функция вызывается при открытии `/`?
+2. Что возвращает `HttpResponse`?
+3. Как имя view связано с записью в `urlpatterns`?
 
 ## Итог урока
 

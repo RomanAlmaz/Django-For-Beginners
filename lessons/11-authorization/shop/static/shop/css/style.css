@@ -1,13 +1,13 @@
-/* Цвета как на странице «ракета» Django: #0c4b33, #44b78b */
 :root {
-    --django-green: #0c4b33;
-    --django-green-dark: #092e20;
-    --django-teal: #44b78b;
-    --django-bg: #f8f8f8;
-    --text-main: #333;
-    --text-muted: #666;
-    --border: #ddd;
-    --error: #ba2121;
+    --django-green: #334e5c;
+    --django-green-dark: #223640;
+    --accent: #d18752;
+    --django-bg: #eef1f2;
+    --surface: #fff;
+    --text-main: #29333a;
+    --text-muted: #66737b;
+    --border: #d3dadd;
+    --error: #a34740;
 }
 
 * {
@@ -23,10 +23,14 @@ body {
 }
 
 .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
     background: var(--django-green);
     color: #fff;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem max(1.5rem, calc((100% - 960px) / 2));
+    border-bottom: 4px solid var(--accent);
 }
 
 .site-brand {
@@ -42,28 +46,34 @@ body {
 }
 
 .site-nav {
-    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0;
 }
 
 .site-nav a {
-    color: var(--django-teal);
+    color: #f0c59f;
     text-decoration: none;
-    margin-right: 0.75rem;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
 }
 
 .site-nav a:hover {
     color: #fff;
-    text-decoration: underline;
+    border-bottom-color: var(--accent);
 }
 
 .site-main {
-    max-width: 800px;
-    margin: 1.5rem auto;
-    padding: 1.5rem 2rem;
-    background: #fff;
+    max-width: 960px;
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+    box-shadow: 0 8px 24px rgba(51, 78, 92, 0.08);
 }
 
 .site-main a {
@@ -71,7 +81,7 @@ body {
 }
 
 .site-main a:hover {
-    color: var(--django-teal);
+    color: var(--accent);
 }
 
 .site-footer {
@@ -82,18 +92,22 @@ body {
 }
 
 .product-list {
+    display: grid;
+    gap: 0.75rem;
     list-style: none;
     padding: 0;
 }
 
 .product-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #eee;
+    padding: 1rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-radius: 6px;
 }
 
 .badge {
     display: inline-block;
-    background: var(--django-teal);
+    background: var(--accent);
     color: #fff;
     font-size: 0.75rem;
     padding: 0.15rem 0.5rem;
@@ -141,8 +155,8 @@ body {
 .form-field select:focus,
 .form-field textarea:focus {
     outline: none;
-    border-color: var(--django-teal);
-    box-shadow: 0 0 0 2px rgba(68, 183, 139, 0.25);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(209, 135, 82, 0.24);
 }
 
 .field-errors,
@@ -158,7 +172,7 @@ body {
 }
 
 button {
-    background: var(--django-teal);
+    background: var(--accent);
     color: #fff;
     border: none;
     padding: 0.5rem 1.25rem;
@@ -177,8 +191,10 @@ button:hover {
 
 .category-block {
     margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+    padding: 1.25rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-radius: 6px;
 }
 
 .category-block h4 {
@@ -187,13 +203,18 @@ button:hover {
 }
 
 .review-list {
+    display: grid;
+    gap: 0.75rem;
     list-style: none;
     padding: 0;
 }
 
 .review-list li {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #eee;
+    padding: 1rem;
+    background: #f8fafb;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
 }
 
 .nav-user {
@@ -208,7 +229,7 @@ button:hover {
 .link-button {
     background: none;
     border: none;
-    color: var(--django-teal);
+    color: #f0c59f;
     cursor: pointer;
     padding: 0;
     font-size: 1rem;
@@ -228,13 +249,13 @@ button:hover {
 .message {
     padding: 0.75rem 1rem;
     margin-bottom: 0.5rem;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .message.success {
     background: #e8f5f0;
     color: var(--django-green-dark);
-    border: 1px solid var(--django-teal);
+    border: 1px solid var(--django-green);
 }
 
 h2 {
@@ -244,4 +265,21 @@ h2 {
 
 h3 {
     color: var(--django-green-dark);
+}
+
+@media (max-width: 760px) {
+    .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .site-nav {
+        justify-content: flex-start;
+    }
+
+    .site-main {
+        margin: 1rem;
+        padding: 1.25rem;
+    }
 }

@@ -1,6 +1,14 @@
 # Lesson 06 - Django Admin
 
-Седьмой урок курса Django for Beginners. Вы продолжите проект из Lesson 05 и настроите **Django Admin** для управления категориями и товарами.
+Шестой урок курса Django for Beginners. Вы продолжите проект из Lesson 05 и настроите **Django Admin** для управления категориями и товарами.
+
+## Что нужно знать до урока
+
+Как работают модели, `makemigrations` и `migrate`.
+
+## Что не нужно запоминать
+
+Все параметры `ModelAdmin`. Начните с регистрации модели, списка, поиска и фильтров.
 
 ## Что изучается в этом уроке
 
@@ -12,28 +20,28 @@
 - `search_fields`;
 - `list_filter`.
 
-## Окружение
+## Запуск
 
-Автор курса использует **Python 3.14.3** и **Django 5.2.12**.
+Автор курса использует **Python 3.14.3** и **Django 5.2.12**. Если virtual environment ещё не создан:
 
-```bash
+**Windows (Command Prompt):**
+
+```bat
 py -m venv venv
-```
-
-**Windows (Git Bash):**
-
-```bash
-source venv/Scripts/activate
+venv\Scripts\activate.bat
 ```
 
 **Linux / macOS:**
 
 ```bash
+python3 -m venv venv
 source venv/bin/activate
 ```
 
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
 ```
 
 ## Что уже было в Lesson 05
@@ -150,7 +158,7 @@ python manage.py runserver
 1. Открыть список **Products** - колонки name, price, is_featured, created_at из `list_display`.
 2. Использовать **поиск** по названию товара (`search_fields`).
 3. Отфильтровать товары по **is featured** (`list_filter`).
-4. Добавить новый товар через **Add Product**.
+4. Добавить новый товар через кнопку **Добавить товар**.
 5. Изменить существующую категорию.
 6. Удалить тестовый товар (Django попросит подтверждение).
 
@@ -159,10 +167,24 @@ python manage.py runserver
 ## Шаг 5. Проверка связи с сайтом
 
 1. В админке отметьте товар как **Is featured**.
-2. Откройте [http://127.0.0.1:8000/](http://127.0.0.1:8000/) - товар должен появиться в Featured products.
+2. Откройте [http://127.0.0.1:8000/](http://127.0.0.1:8000/) - товар должен появиться в разделе «Избранные товары».
 3. Снимите галочку - товар пропадет с главной.
 
 Так вы видите, что админка и публичный сайт работают с одной базой данных.
+
+## Простой повторный тест
+
+`shop/tests.py` создаёт избранный товар и проверяет, что он появился на главной странице. Писать такой тест самостоятельно пока не обязательно.
+
+```bash
+python manage.py test
+```
+
+## Проверь себя
+
+1. Зачем нужен superuser?
+2. Что произойдёт после регистрации модели в `admin.py`?
+3. Чем отличаются `list_display`, `search_fields` и `list_filter`?
 
 ## Итог урока
 

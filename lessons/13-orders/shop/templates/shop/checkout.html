@@ -1,0 +1,38 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <p>Проверьте состав заказа перед подтверждением.</p>
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in cart_lines %}
+                <tr>
+                    <td>{{ line.product.name }}</td>
+                    <td>{{ line.product.price }} руб.</td>
+                    <td>{{ line.quantity }}</td>
+                    <td>{{ line.line_total }} руб.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="cart-total"><strong>Итого:</strong> {{ cart_total }} руб.</p>
+
+    <form method="post" class="checkout-form">
+        {% csrf_token %}
+        <button type="submit" class="btn-primary">Подтвердить заказ</button>
+        <a href="{% url 'cart' %}">Вернуться в корзину</a>
+    </form>
+{% endblock %}

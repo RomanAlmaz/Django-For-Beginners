@@ -1,0 +1,42 @@
+{% extends 'shop/base.html' %}
+
+{% block title %}{{ page_title }} - Django Shop{% endblock %}
+
+{% block content %}
+    <h2>{{ page_title }}</h2>
+
+    <p>
+        <strong>Статус:</strong>
+        <span class="order-status">{{ order.get_status_display }}</span>
+    </p>
+    <p><strong>Дата:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+
+    <table class="cart-table">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Цена</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+                <tr>
+                    <td>
+                        <a href="{% url 'product_detail' item.product.pk %}">
+                            {{ item.product_name }}
+                        </a>
+                    </td>
+                    <td>{{ item.price }} руб.</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.line_total }} руб.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="cart-total"><strong>Итого:</strong> {{ order.total }} руб.</p>
+
+    <p><a href="{% url 'order_list' %}">Все заказы</a></p>
+{% endblock %}
